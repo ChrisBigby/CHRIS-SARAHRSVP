@@ -5,39 +5,188 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Wedding RSVP</title>
     <style>
-        body { font-family: 'Georgia', serif; text-align: center; padding: 50px; background-color: #fdfdfd;}
-        .rsvp-container { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background: white;}
-        input, select, button { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
-        button { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-        button:hover { background-color: #45a049; }
+        /* 1. Basic Reset and Background */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f6f0e6; /* Soft beige background from the invitation */
+            font-family: 'Georgia', serif; /* Elegant, classic serif font */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; /* Keeps the animation within the screen */
+            position: relative;
+        }
+
+        /* 2. Static Floral Borders (using the assets you downloaded) */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 250px;
+            background-image: url('top-flowers.png'); /* The top watercolor art */
+            background-repeat: no-repeat;
+            background-position: center top;
+            background-size: contain;
+            z-index: 1;
+        }
+
+        body::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            background-image: url('bottom-flowers.png'); /* The bottom watercolor art */
+            background-repeat: no-repeat;
+            background-position: center bottom;
+            background-size: contain;
+            z-index: 1;
+        }
+
+        /* 3. The RSVP Form Container */
+        .rsvp-container {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 450px;
+            background-color: rgba(255, 255, 255, 0.9); /* Transparent white to let background show through */
+            border: 1px solid #d4c8b8;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            padding: 40px;
+            text-align: center;
+        }
+
+        /* 4. Text Styling (matches the invitation) */
+        h2 {
+            font-weight: normal;
+            color: #7a6e5a; /* Soft brown color from invitation */
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        /* Form styling */
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            color: #7a6e5a;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #d4c8b8;
+            border-radius: 8px;
+            background-color: #fdfdfd;
+            box-sizing: border-box;
+            font-family: 'Georgia', serif;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #8c7f6b; /* Soft brown button */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Georgia', serif;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #6e6151;
+        }
+
+        #successMessage {
+            display: none;
+            color: #5d8e64; /* Soft green success text */
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+
+        /* 5. "Moving Flowers" - Falling Petal Animations */
+        .petal {
+            position: absolute;
+            background-image: url('petal.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            width: 20px;
+            height: 20px;
+            opacity: 0.8;
+            z-index: 5;
+            animation: fall 10s linear infinite;
+        }
+
+        /* Create variations in timing and position */
+        .petal:nth-child(1) { left: 10%; animation-delay: 0s; width: 25px; height: 25px; }
+        .petal:nth-child(2) { left: 30%; animation-delay: 2s; }
+        .petal:nth-child(3) { left: 50%; animation-delay: 4s; animation-duration: 12s;}
+        .petal:nth-child(4) { left: 70%; animation-delay: 6s; }
+        .petal:nth-child(5) { left: 90%; animation-delay: 8s; width: 15px; height: 15px; }
+
+        @keyframes fall {
+            0% {
+                top: -10%;
+                transform: translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% {
+                top: 110%;
+                transform: translateX(50px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
     </style>
 </head>
 <body>
 
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+
     <div class="rsvp-container">
         <h2>RSVP</h2>
         <form id="rsvpForm">
+            <label>Name(s):</label>
             <input type="text" name="name" placeholder="Full Name(s)" required>
             
+            <label>Will you be attending?</label>
             <select name="attending" required>
-                <option value="" disabled selected>Will you be attending?</option>
+                <option value="" disabled selected>Select an option</option>
                 <option value="Yes">Joyfully Accept</option>
                 <option value="No">Regretfully Decline</option>
             </select>
             
-            <input type="number" name="guests" placeholder="Total number in your party" min="0" required>
+            <label>Total number in your party:</label>
+            <input type="number" name="guests" placeholder="e.g. 2" min="0" required>
             
             <button type="submit" id="submitBtn">Send RSVP</button>
         </form>
-        <p id="successMessage" style="display:none; color: green;">Thank you! Your RSVP has been received.</p>
+        <p id="successMessage">Thank you! Your response has been received.</p>
     </div>
 
     <script>
+        // Use the connection logic from previous step
         const form = document.getElementById('rsvpForm');
         const submitBtn = document.getElementById('submitBtn');
         const successMessage = document.getElementById('successMessage');
 
-        // REPLACE THIS URL WITH YOUR ACTUAL WEB APP URL
+        // REPLACE THIS URL WITH YOUR ACTUAL WEB APP URL FROM STEP 3
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw278gjb0ayz_5eMSZb0We8evxxnxgmPTzUQiPg8rBAmXkCJMr6Jl-xKJXZGqdLXFhFBw/exec';
 
         form.addEventListener('submit', e => {
