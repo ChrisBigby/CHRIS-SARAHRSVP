@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 
     <style>
-        /* 1. Basic Reset */
+        /* Basic Reset */
         body {
             margin: 0;
             padding: 0;
@@ -23,7 +23,7 @@
             background-color: #f6f0e6;
         }
 
-        /* 2. Full-Screen Video Background */
+        /* Full-Screen Video Background */
         #bgVideo {
             position: fixed;
             top: 50%;
@@ -37,25 +37,24 @@
             object-fit: cover; 
         }
 
-        /* 3. Invisible RSVP Container (Larger & Seamless) */
+        /* RSVP Container */
         .rsvp-container {
             position: relative;
             z-index: 10;
             width: 90%;
-            max-width: 600px; /* Made the form wider */
+            max-width: 600px;
             padding: 20px;
             text-align: center;
-            /* Removed the background, border, and blur completely */
         }
 
-        /* 4. Classic Typography & Text Shadows for Readability */
+        /* Typography */
         h2 {
             font-family: 'Alex Brush', cursive;
-            font-size: 5rem; /* Huge, elegant calligraphy */
+            font-size: 5rem;
             font-weight: normal;
             color: #5c5041; 
             margin-bottom: 20px;
-            text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.8); /* Ensures it stays readable over the video */
+            text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.8);
         }
 
         label {
@@ -64,35 +63,42 @@
             margin-bottom: 5px;
             color: #4a4135;
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem; /* Larger labels */
+            font-size: 1.5rem;
             font-style: italic;
             text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
         }
 
-        /* 5. Seamless Input Fields (Underlines only) */
+        /* Form Fade Transition */
+        #rsvpForm {
+            opacity: 1;
+            transition: opacity 0.6s ease;
+        }
+
+        #rsvpForm.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Seamless Input Fields */
         input, select {
             width: 100%;
             padding: 10px 5px;
             margin-bottom: 30px;
-            background-color: transparent; /* Makes the box disappear */
+            background-color: transparent;
             border: none;
-            border-bottom: 1.5px solid #7a6e5a; /* Sleek underline */
+            border-bottom: 1.5px solid #7a6e5a;
             color: #3b3329;
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.4rem; /* Larger input text */
+            font-size: 1.4rem;
             box-sizing: border-box;
             outline: none;
             text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.8);
-        }
-
-        /* Removes default styling on iOS devices to keep the seamless look */
-        input {
             -webkit-appearance: none;
             border-radius: 0;
         }
 
         input:focus, select:focus {
-            border-bottom: 2px solid #3b3329; /* Darkens underline when typing */
+            border-bottom: 2px solid #3b3329;
         }
 
         input::placeholder {
@@ -100,22 +106,22 @@
             font-style: italic;
         }
 
-        /* 6. Elegant Transparent Button */
+        /* Elegant Button */
         button {
             width: 80%;
             padding: 15px;
             margin-top: 10px;
-            background-color: rgba(255, 255, 255, 0.3); /* Barely visible background */
+            background-color: rgba(255, 255, 255, 0.3);
             color: #4a4135;
             border: 1.5px solid #7a6e5a;
-            border-radius: 50px; /* Pill shape */
+            border-radius: 50px;
             font-size: 1.4rem;
             font-family: 'Cormorant Garamond', serif;
             text-transform: uppercase;
             letter-spacing: 3px;
             cursor: pointer;
             transition: all 0.4s ease;
-            backdrop-filter: blur(2px); /* Very soft blur just on the button */
+            backdrop-filter: blur(2px);
         }
 
         button:hover {
@@ -123,8 +129,24 @@
             color: #2e2821;
         }
 
+        /* Button Loading Animation */
+        .btn-loading {
+            animation: pulse 1.5s infinite ease-in-out;
+            pointer-events: none;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-color: #4a4135;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(0.97); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Success Message Styling & Animation */
         #successMessage {
             display: none;
+            opacity: 0;
             color: #4a5c4e;
             font-family: 'Cormorant Garamond', serif;
             font-size: 1.8rem;
@@ -132,13 +154,28 @@
             margin-top: 30px;
             text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
         }
+
+        .fade-in-up {
+            display: block !important;
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
 
     <video autoplay muted loop playsinline id="bgVideo">
         <source src="background.mp4" type="video/mp4">
-        Your browser does not support HTML5 video.
     </video>
 
     <div class="rsvp-container">
@@ -172,20 +209,30 @@
 
         form.addEventListener('submit', e => {
             e.preventDefault();
+            
+            // 1. Start button loading animation
+            submitBtn.classList.add('btn-loading');
             submitBtn.innerText = 'Sending...';
-            submitBtn.disabled = true;
 
             const formData = new FormData(form);
 
             fetch(scriptURL, { method: 'POST', body: formData })
                 .then(response => {
-                    form.style.display = 'none';
-                    successMessage.style.display = 'block';
+                    // 2. Fade out the form
+                    form.classList.add('fade-out');
+                    
+                    // 3. Wait for fade out to finish, then hide form and show message
+                    setTimeout(() => {
+                        form.style.display = 'none';
+                        successMessage.classList.add('fade-in-up');
+                    }, 600); // 600ms matches the CSS transition time
                 })
                 .catch(error => {
                     console.error('Error!', error.message);
+                    
+                    // Revert button if there's an error
+                    submitBtn.classList.remove('btn-loading');
                     submitBtn.innerText = 'Send Reply';
-                    submitBtn.disabled = false;
                     alert('There was an error submitting your RSVP. Please try again.');
                 });
         });
