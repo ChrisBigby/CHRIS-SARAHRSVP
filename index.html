@@ -5,72 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Wedding RSVP</title>
     <style>
-        /* 1. Basic Reset and Background */
+        /* 1. Basic Reset */
         body {
             margin: 0;
             padding: 0;
-            background-color: #f6f0e6; /* Soft beige background from the invitation */
-            font-family: 'Georgia', serif; /* Elegant, classic serif font */
+            font-family: 'Georgia', serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden; /* Keeps the animation within the screen */
+            overflow: hidden;
             position: relative;
+            background-color: #f6f0e6; /* Soft beige fallback color while video loads */
         }
 
-        /* 2. Static Floral Borders (using the assets you downloaded) */
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 250px;
-            background-image: url('top-flowers.png'); /* The top watercolor art */
-            background-repeat: no-repeat;
-            background-position: center top;
-            background-size: contain;
-            z-index: 1;
+        /* 2. Full-Screen Video Background Styling */
+        #bgVideo {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1; /* Pushes the video behind your form */
+            transform: translate(-50%, -50%);
+            object-fit: cover; /* Stretches and crops video to fill screen without stretching distortion */
         }
 
-        body::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 200px;
-            background-image: url('bottom-flowers.png'); /* The bottom watercolor art */
-            background-repeat: no-repeat;
-            background-position: center bottom;
-            background-size: contain;
-            z-index: 1;
-        }
-
-        /* 3. The RSVP Form Container */
+        /* 3. RSVP Form Container */
         .rsvp-container {
             position: relative;
             z-index: 10;
             width: 90%;
             max-width: 450px;
-            background-color: rgba(255, 255, 255, 0.9); /* Transparent white to let background show through */
+            background-color: rgba(255, 255, 255, 0.85); /* Slightly transparent white to show the video behind it */
             border: 1px solid #d4c8b8;
             border-radius: 15px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             padding: 40px;
             text-align: center;
+            backdrop-filter: blur(3px); /* Gives a beautiful modern frosted glass effect over the video */
         }
 
-        /* 4. Text Styling (matches the invitation) */
+        /* 4. Text and Input Styling */
         h2 {
             font-weight: normal;
-            color: #7a6e5a; /* Soft brown color from invitation */
+            color: #7a6e5a;
             letter-spacing: 2px;
             margin-bottom: 30px;
         }
 
-        /* Form styling */
         label {
             display: block;
             text-align: left;
@@ -93,7 +78,7 @@
         button {
             width: 100%;
             padding: 15px;
-            background-color: #8c7f6b; /* Soft brown button */
+            background-color: #8c7f6b;
             color: white;
             border: none;
             border-radius: 8px;
@@ -109,55 +94,18 @@
 
         #successMessage {
             display: none;
-            color: #5d8e64; /* Soft green success text */
+            color: #5d8e64;
             font-size: 1.2em;
             margin-top: 20px;
         }
-
-        /* 5. "Moving Flowers" - Falling Petal Animations */
-        .petal {
-            position: absolute;
-            background-image: url('petal.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            width: 20px;
-            height: 20px;
-            opacity: 0.8;
-            z-index: 5;
-            animation: fall 10s linear infinite;
-        }
-
-        /* Create variations in timing and position */
-        .petal:nth-child(1) { left: 10%; animation-delay: 0s; width: 25px; height: 25px; }
-        .petal:nth-child(2) { left: 30%; animation-delay: 2s; }
-        .petal:nth-child(3) { left: 50%; animation-delay: 4s; animation-duration: 12s;}
-        .petal:nth-child(4) { left: 70%; animation-delay: 6s; }
-        .petal:nth-child(5) { left: 90%; animation-delay: 8s; width: 15px; height: 15px; }
-
-        @keyframes fall {
-            0% {
-                top: -10%;
-                transform: translateX(0) rotate(0deg);
-                opacity: 0;
-            }
-            10% { opacity: 0.8; }
-            90% { opacity: 0.8; }
-            100% {
-                top: 110%;
-                transform: translateX(50px) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
     </style>
 </head>
 <body>
 
-    <div class="petal"></div>
-    <div class="petal"></div>
-    <div class="petal"></div>
-    <div class="petal"></div>
-    <div class="petal"></div>
+    <video autoplay muted loop playsinline id="bgVideo">
+        <source src="background.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
 
     <div class="rsvp-container">
         <h2>RSVP</h2>
@@ -181,12 +129,11 @@
     </div>
 
     <script>
-        // Use the connection logic from previous step
         const form = document.getElementById('rsvpForm');
         const submitBtn = document.getElementById('submitBtn');
         const successMessage = document.getElementById('successMessage');
 
-        // REPLACE THIS URL WITH YOUR ACTUAL WEB APP URL FROM STEP 3
+        // REPLACE THIS URL WITH YOUR ACTUAL WEB APP URL FROM GOOGLE SHEETS
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw278gjb0ayz_5eMSZb0We8evxxnxgmPTzUQiPg8rBAmXkCJMr6Jl-xKJXZGqdLXFhFBw/exec';
 
         form.addEventListener('submit', e => {
