@@ -47,6 +47,17 @@
             text-align: center;
         }
 
+        /* Form Wrapper (Holds Header & Form for smooth fading) */
+        #formWrapper {
+            opacity: 1;
+            transition: opacity 0.6s ease;
+        }
+
+        #formWrapper.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
         /* Typography */
         h2 {
             font-family: 'Alex Brush', cursive;
@@ -66,17 +77,6 @@
             font-size: 1.5rem;
             font-style: italic;
             text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
-        }
-
-        /* Form Fade Transition */
-        #rsvpForm {
-            opacity: 1;
-            transition: opacity 0.6s ease;
-        }
-
-        #rsvpForm.fade-out {
-            opacity: 0;
-            pointer-events: none;
         }
 
         /* Seamless Input Fields */
@@ -143,8 +143,8 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Shared Styling for Success & Already Responded Messages */
-        .message-text {
+        /* Dynamic Message Styling */
+        #dynamicMessage {
             display: none;
             opacity: 0;
             color: #4a5c4e;
@@ -156,7 +156,6 @@
             line-height: 1.4;
         }
 
-        /* Animation class to make messages float up */
         .fade-in-up {
             display: block !important;
             animation: fadeInUp 1s ease forwards;
@@ -181,72 +180,84 @@
     </video>
 
     <div class="rsvp-container">
-        <h2>RSVP</h2>
         
-        <form id="rsvpForm">
-            <label>Name:</label>
-            <input type="text" name="name" placeholder="Please enter your full name" required>
-            
-            <label>Will you be attending?</label>
-            <select name="attending" required>
-                <option value="" disabled selected>Kindly select an option</option>
-                <option value="Yes">Joyfully Accept</option>
-                <option value="No">Regretfully Decline</option>
-            </select>
-            
-            <button type="submit" id="submitBtn">Send Reply</button>
-        </form>
+        <div id="formWrapper">
+            <h2>RSVP</h2>
+            <form id="rsvpForm">
+                <label>Name:</label>
+                <input type="text" name="name" placeholder="Please enter your full name" required>
+                
+                <label>Will you be attending?</label>
+                <select name="attending" required>
+                    <option value="" disabled selected>Kindly select an option</option>
+                    <option value="Yes">Joyfully Accept</option>
+                    <option value="No">Regretfully Decline</option>
+                </select>
+                
+                <button type="submit" id="submitBtn">Send Reply</button>
+            </form>
+        </div>
 
-        <p id="successMessage" class="message-text">Thank you! Your response has been beautifully recorded.</p>
-        
-        <p id="alreadyRespondedMessage" class="message-text">Hi there! Thank you so much for your previous response. We have everything we need and look forward to seeing you soon!</p>
+        <p id="dynamicMessage"></p>
+
     </div>
 
     <script>
+        const formWrapper = document.getElementById('formWrapper');
         const form = document.getElementById('rsvpForm');
         const submitBtn = document.getElementById('submitBtn');
-        const successMessage = document.getElementById('successMessage');
-        const alreadyRespondedMessage = document.getElementById('alreadyRespondedMessage');
+        const dynamicMessage = document.getElementById('dynamicMessage');
 
         // *** PASTE YOUR GOOGLE SCRIPT URL HERE ***
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw278gjb0ayz_5eMSZb0We8evxxnxgmPTzUQiPg8rBAmXkCJMr6Jl-xKJXZGqdLXFhFBw/exec';
 
+        // Your Custom Messages
+        const msgReturnVisitor = "Hi there! Thank you so much for your previous response. We have everything we need and look forward to seeing you soon!";
+        const msgAccept = "Thank you! Your response has been beautifully recorded.";
+        const msgDecline = "We completely understand, no worries at all! Your warm wishes are more than enough to bless our special day.";
+
         // 1. CHECK MEMORY ON PAGE LOAD
-        // If the browser remembers they already submitted, hide the form and show the custom message immediately
-        if (localStorage.getItem('weddingRsvpSubmitted') === 'true') {
-            form.style.display = 'none';
-            alreadyRespondedMessage.style.display = 'block';
-            alreadyRespondedMessage.style.opacity = '1'; // Ensure it's fully visible immediately
+        if (localStorage.getItem('weddingRsvpStatus')) {
+            formWrapper.style.display = 'none';
+            dynamicMessage.innerText = msgReturnVisitor;
+            dynamicMessage.style.display = 'block';
+            dynamicMessage.style.opacity = '1'; 
         }
 
         // 2. HANDLE NEW SUBMISSIONS
         form.addEventListener('submit', e => {
             e.preventDefault();
             
-            // Start button loading animation
             submitBtn.classList.add('btn-loading');
             submitBtn.innerText = 'Sending...';
 
             const formData = new FormData(form);
+            const attendingStatus = form.attending.value; // Grabs "Yes" or "No"
 
             fetch(scriptURL, { method: 'POST', body: formData })
                 .then(response => {
-                    // Set the browser memory so it remembers them next time!
-                    localStorage.setItem('weddingRsvpSubmitted', 'true');
+                    // Remember they submitted
+                    localStorage.setItem('weddingRsvpStatus', attendingStatus);
 
-                    // Fade out the form
-                    form.classList.add('fade-out');
+                    // Fade out the entire form wrapper (including the RSVP title)
+                    formWrapper.classList.add('fade-out');
                     
-                    // Wait for fade out to finish, then hide form and show the success message
+                    // Wait for fade out, hide it completely, update text based on choice, and fade in message
                     setTimeout(() => {
-                        form.style.display = 'none';
-                        successMessage.classList.add('fade-in-up');
+                        formWrapper.style.display = 'none';
+                        
+                        // Dynamically choose message based on Yes/No
+                        if (attendingStatus === 'Yes') {
+                            dynamicMessage.innerText = msgAccept;
+                        } else {
+                            dynamicMessage.innerText = msgDecline;
+                        }
+
+                        dynamicMessage.classList.add('fade-in-up');
                     }, 600); 
                 })
                 .catch(error => {
                     console.error('Error!', error.message);
-                    
-                    // Revert button if there's an error
                     submitBtn.classList.remove('btn-loading');
                     submitBtn.innerText = 'Send Reply';
                     alert('There was an error submitting your RSVP. Please try again.');
