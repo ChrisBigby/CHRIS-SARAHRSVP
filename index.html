@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Wedding RSVP</title>
+    <style>
+        body { font-family: 'Georgia', serif; text-align: center; padding: 50px; background-color: #fdfdfd;}
+        .rsvp-container { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background: white;}
+        input, select, button { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
+        button { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+    </style>
+</head>
+<body>
+
+    <div class="rsvp-container">
+        <h2>RSVP</h2>
+        <form id="rsvpForm">
+            <input type="text" name="name" placeholder="Full Name(s)" required>
+            
+            <select name="attending" required>
+                <option value="" disabled selected>Will you be attending?</option>
+                <option value="Yes">Joyfully Accept</option>
+                <option value="No">Regretfully Decline</option>
+            </select>
+            
+            <input type="number" name="guests" placeholder="Total number in your party" min="0" required>
+            
+            <button type="submit" id="submitBtn">Send RSVP</button>
+        </form>
+        <p id="successMessage" style="display:none; color: green;">Thank you! Your RSVP has been received.</p>
+    </div>
+
+    <script>
+        const form = document.getElementById('rsvpForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMessage = document.getElementById('successMessage');
+
+        // REPLACE THIS URL WITH YOUR ACTUAL WEB APP URL
+        const scriptURL = 'YOUR_GOOGLE_SCRIPT_WEB_APP_URL';
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            submitBtn.innerText = 'Sending...';
+            submitBtn.disabled = true;
+
+            const formData = new FormData(form);
+
+            fetch(scriptURL, { method: 'POST', body: formData })
+                .then(response => {
+                    form.style.display = 'none';
+                    successMessage.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error!', error.message);
+                    submitBtn.innerText = 'Send RSVP';
+                    submitBtn.disabled = false;
+                    alert('There was an error submitting your RSVP. Please try again.');
+                });
+        });
+    </script>
+
+</body>
+</html>
