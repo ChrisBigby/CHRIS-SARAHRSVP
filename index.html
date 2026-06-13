@@ -143,8 +143,8 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Success Message Styling & Animation */
-        #successMessage {
+        /* Shared Styling for Success & Already Responded Messages */
+        .message-text {
             display: none;
             opacity: 0;
             color: #4a5c4e;
@@ -153,8 +153,10 @@
             font-style: italic;
             margin-top: 30px;
             text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
+            line-height: 1.4;
         }
 
+        /* Animation class to make messages float up */
         .fade-in-up {
             display: block !important;
             animation: fadeInUp 1s ease forwards;
@@ -180,9 +182,10 @@
 
     <div class="rsvp-container">
         <h2>RSVP</h2>
+        
         <form id="rsvpForm">
-            <label>Name(s):</label>
-            <input type="text" name="name" placeholder="Please enter your full name(s)" required>
+            <label>Name:</label>
+            <input type="text" name="name" placeholder="Please enter your full name" required>
             
             <label>Will you be attending?</label>
             <select name="attending" required>
@@ -191,26 +194,36 @@
                 <option value="No">Regretfully Decline</option>
             </select>
             
-            <label>Total number in your party:</label>
-            <input type="number" name="guests" placeholder="Number of guests" min="0" required>
-            
             <button type="submit" id="submitBtn">Send Reply</button>
         </form>
-        <p id="successMessage">Thank you! Your response has been beautifully recorded.</p>
+
+        <p id="successMessage" class="message-text">Thank you! Your response has been beautifully recorded.</p>
+        
+        <p id="alreadyRespondedMessage" class="message-text">Hi there! Thank you so much for your previous response. We have everything we need and look forward to seeing you soon!</p>
     </div>
 
     <script>
         const form = document.getElementById('rsvpForm');
         const submitBtn = document.getElementById('submitBtn');
         const successMessage = document.getElementById('successMessage');
+        const alreadyRespondedMessage = document.getElementById('alreadyRespondedMessage');
 
         // *** PASTE YOUR GOOGLE SCRIPT URL HERE ***
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw278gjb0ayz_5eMSZb0We8evxxnxgmPTzUQiPg8rBAmXkCJMr6Jl-xKJXZGqdLXFhFBw/exec';
 
+        // 1. CHECK MEMORY ON PAGE LOAD
+        // If the browser remembers they already submitted, hide the form and show the custom message immediately
+        if (localStorage.getItem('weddingRsvpSubmitted') === 'true') {
+            form.style.display = 'none';
+            alreadyRespondedMessage.style.display = 'block';
+            alreadyRespondedMessage.style.opacity = '1'; // Ensure it's fully visible immediately
+        }
+
+        // 2. HANDLE NEW SUBMISSIONS
         form.addEventListener('submit', e => {
             e.preventDefault();
             
-            // 1. Start button loading animation
+            // Start button loading animation
             submitBtn.classList.add('btn-loading');
             submitBtn.innerText = 'Sending...';
 
@@ -218,14 +231,17 @@
 
             fetch(scriptURL, { method: 'POST', body: formData })
                 .then(response => {
-                    // 2. Fade out the form
+                    // Set the browser memory so it remembers them next time!
+                    localStorage.setItem('weddingRsvpSubmitted', 'true');
+
+                    // Fade out the form
                     form.classList.add('fade-out');
                     
-                    // 3. Wait for fade out to finish, then hide form and show message
+                    // Wait for fade out to finish, then hide form and show the success message
                     setTimeout(() => {
                         form.style.display = 'none';
                         successMessage.classList.add('fade-in-up');
-                    }, 600); // 600ms matches the CSS transition time
+                    }, 600); 
                 })
                 .catch(error => {
                     console.error('Error!', error.message);
