@@ -4,22 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Wedding RSVP</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
     <style>
         /* 1. Basic Reset */
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Georgia', serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             overflow: hidden;
             position: relative;
-            background-color: #f6f0e6; /* Soft beige fallback color while video loads */
+            background-color: #f6f0e6;
         }
 
-        /* 2. Full-Screen Video Background Styling */
+        /* 2. Full-Screen Video Background */
         #bgVideo {
             position: fixed;
             top: 50%;
@@ -28,75 +32,105 @@
             min-height: 100%;
             width: auto;
             height: auto;
-            z-index: -1; /* Pushes the video behind your form */
+            z-index: -1; 
             transform: translate(-50%, -50%);
-            object-fit: cover; /* Stretches and crops video to fill screen without stretching distortion */
+            object-fit: cover; 
         }
 
-        /* 3. RSVP Form Container */
+        /* 3. Invisible RSVP Container (Larger & Seamless) */
         .rsvp-container {
             position: relative;
             z-index: 10;
             width: 90%;
-            max-width: 450px;
-            background-color: rgba(255, 255, 255, 0.85); /* Slightly transparent white to show the video behind it */
-            border: 1px solid #d4c8b8;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            padding: 40px;
+            max-width: 600px; /* Made the form wider */
+            padding: 20px;
             text-align: center;
-            backdrop-filter: blur(3px); /* Gives a beautiful modern frosted glass effect over the video */
+            /* Removed the background, border, and blur completely */
         }
 
-        /* 4. Text and Input Styling */
+        /* 4. Classic Typography & Text Shadows for Readability */
         h2 {
+            font-family: 'Alex Brush', cursive;
+            font-size: 5rem; /* Huge, elegant calligraphy */
             font-weight: normal;
-            color: #7a6e5a;
-            letter-spacing: 2px;
-            margin-bottom: 30px;
+            color: #5c5041; 
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.8); /* Ensures it stays readable over the video */
         }
 
         label {
             display: block;
             text-align: left;
             margin-bottom: 5px;
-            color: #7a6e5a;
-            font-size: 14px;
+            color: #4a4135;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem; /* Larger labels */
+            font-style: italic;
+            text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
         }
 
+        /* 5. Seamless Input Fields (Underlines only) */
         input, select {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #d4c8b8;
-            border-radius: 8px;
-            background-color: #fdfdfd;
+            padding: 10px 5px;
+            margin-bottom: 30px;
+            background-color: transparent; /* Makes the box disappear */
+            border: none;
+            border-bottom: 1.5px solid #7a6e5a; /* Sleek underline */
+            color: #3b3329;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem; /* Larger input text */
             box-sizing: border-box;
-            font-family: 'Georgia', serif;
+            outline: none;
+            text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.8);
         }
 
+        /* Removes default styling on iOS devices to keep the seamless look */
+        input {
+            -webkit-appearance: none;
+            border-radius: 0;
+        }
+
+        input:focus, select:focus {
+            border-bottom: 2px solid #3b3329; /* Darkens underline when typing */
+        }
+
+        input::placeholder {
+            color: #9c9182;
+            font-style: italic;
+        }
+
+        /* 6. Elegant Transparent Button */
         button {
-            width: 100%;
+            width: 80%;
             padding: 15px;
-            background-color: #8c7f6b;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-family: 'Georgia', serif;
+            margin-top: 10px;
+            background-color: rgba(255, 255, 255, 0.3); /* Barely visible background */
+            color: #4a4135;
+            border: 1.5px solid #7a6e5a;
+            border-radius: 50px; /* Pill shape */
+            font-size: 1.4rem;
+            font-family: 'Cormorant Garamond', serif;
+            text-transform: uppercase;
+            letter-spacing: 3px;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(2px); /* Very soft blur just on the button */
         }
 
         button:hover {
-            background-color: #6e6151;
+            background-color: rgba(122, 110, 90, 0.2);
+            color: #2e2821;
         }
 
         #successMessage {
             display: none;
-            color: #5d8e64;
-            font-size: 1.2em;
-            margin-top: 20px;
+            color: #4a5c4e;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-style: italic;
+            margin-top: 30px;
+            text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
         }
     </style>
 </head>
@@ -111,21 +145,21 @@
         <h2>RSVP</h2>
         <form id="rsvpForm">
             <label>Name(s):</label>
-            <input type="text" name="name" placeholder="Full Name(s)" required>
+            <input type="text" name="name" placeholder="Please enter your full name(s)" required>
             
             <label>Will you be attending?</label>
             <select name="attending" required>
-                <option value="" disabled selected>Select an option</option>
+                <option value="" disabled selected>Kindly select an option</option>
                 <option value="Yes">Joyfully Accept</option>
                 <option value="No">Regretfully Decline</option>
             </select>
             
             <label>Total number in your party:</label>
-            <input type="number" name="guests" placeholder="e.g. 2" min="0" required>
+            <input type="number" name="guests" placeholder="Number of guests" min="0" required>
             
-            <button type="submit" id="submitBtn">Send RSVP</button>
+            <button type="submit" id="submitBtn">Send Reply</button>
         </form>
-        <p id="successMessage">Thank you! Your response has been received.</p>
+        <p id="successMessage">Thank you! Your response has been beautifully recorded.</p>
     </div>
 
     <script>
@@ -133,7 +167,7 @@
         const submitBtn = document.getElementById('submitBtn');
         const successMessage = document.getElementById('successMessage');
 
-        // REPLACE THIS URL WITH YOUR ACTUAL WEB APP URL FROM GOOGLE SHEETS
+        // *** PASTE YOUR GOOGLE SCRIPT URL HERE ***
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw278gjb0ayz_5eMSZb0We8evxxnxgmPTzUQiPg8rBAmXkCJMr6Jl-xKJXZGqdLXFhFBw/exec';
 
         form.addEventListener('submit', e => {
@@ -150,7 +184,7 @@
                 })
                 .catch(error => {
                     console.error('Error!', error.message);
-                    submitBtn.innerText = 'Send RSVP';
+                    submitBtn.innerText = 'Send Reply';
                     submitBtn.disabled = false;
                     alert('There was an error submitting your RSVP. Please try again.');
                 });
