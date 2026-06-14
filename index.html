@@ -10,15 +10,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* 1. Basic Reset & Anti-Smart-Zoom */
+        /* Basic Reset & Anti-Smart-Zoom */
         html, body {
             margin: 0;
             padding: 0;
             -webkit-text-size-adjust: 100%; 
             text-size-adjust: 100%;
             background-color: #f6f0e6; 
-            /* Added smooth transition for the background image swap */
-            transition: background-image 0.5s ease-in-out;
         }
 
         body {
@@ -30,7 +28,7 @@
             position: relative;
         }
 
-        /* 2. Full-Screen Video Background */
+        /* Full-Screen Video Background */
         #bgVideo {
             position: fixed;
             top: 0;
@@ -40,10 +38,9 @@
             z-index: 1; 
             object-fit: cover; 
             object-position: center; 
-            transition: opacity 0.3s ease; /* Smooth fade out when swapped */
         }
 
-        /* 3. RSVP Container */
+        /* RSVP Container */
         .rsvp-container {
             position: relative;
             z-index: 10; 
@@ -55,7 +52,7 @@
             overflow-y: auto; 
         }
 
-        /* 4. Form Wrapper */
+        /* Form Wrapper */
         #formWrapper {
             opacity: 1;
             transition: opacity 0.6s ease;
@@ -66,7 +63,7 @@
             pointer-events: none;
         }
 
-        /* 5. Modern Typography */
+        /* Modern Typography */
         h2 {
             font-family: 'Montserrat', sans-serif;
             font-size: 4rem;
@@ -103,7 +100,7 @@
             text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
         }
 
-        /* 6. Seamless Input Fields & Textarea */
+        /* Seamless Input Fields & Textarea */
         input, select, textarea {
             width: 100%;
             padding: 10px 5px;
@@ -352,20 +349,12 @@
             bgVideo.src = 'background-mobile.mp4';
             bgVideo.loop = false; 
             
-            // THE FOOLPROOF FIX: Swap the body background to an image when the video nears its end.
-            const swapToImage = function() {
-                document.body.style.backgroundImage = "url('background-mobile-last-frame.png')";
-                document.body.style.backgroundSize = "cover";
-                document.body.style.backgroundPosition = "center";
-                bgVideo.style.opacity = "0"; // Smoothly hide video
-                setTimeout(() => { bgVideo.style.display = "none"; }, 300); // Remove from DOM completely
-            };
-
-            // Listeners to ensure the swap happens no matter what the Samsung browser tries to do
-            bgVideo.addEventListener('ended', swapToImage);
+            // THE FIX: We tell the video to check its time constantly.
+            // When it is 0.5 seconds away from the end, we forcefully PAUSE it. 
+            // It will never reach the end, preventing the browser from hiding it!
             bgVideo.addEventListener('timeupdate', function() {
-                if (this.duration && this.currentTime >= this.duration - 0.1) {
-                    swapToImage();
+                if (bgVideo.duration && bgVideo.currentTime >= bgVideo.duration - 0.5) {
+                    bgVideo.pause();
                 }
             });
 
@@ -379,7 +368,6 @@
         bgVideo.play().catch(function(error) {
             console.log("Browser autoplay blocked, video will remain paused.");
         });
-
 
         // --- MESSAGE TOGGLE ANIMATION ---
         const messageToggle = document.getElementById('messageToggle');
