@@ -10,13 +10,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* 1. Basic Reset & Anti-Smart-Zoom for Android/iOS */
+        /* 1. Basic Reset & Anti-Smart-Zoom */
         html, body {
             margin: 0;
             padding: 0;
-            -webkit-text-size-adjust: 100%; /* Prevents Samsung S24 from auto-zooming texts */
+            -webkit-text-size-adjust: 100%; 
             text-size-adjust: 100%;
-            background-color: #f6f0e6;
+            background-color: #f6f0e6; /* Fallback color if internet is slow */
         }
 
         body {
@@ -35,7 +35,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: -1; 
+            z-index: 1; /* THE FIX: Pulled forward to layer 1 so it's never hidden behind the body color */
             object-fit: cover; 
             object-position: center; 
         }
@@ -43,7 +43,7 @@
         /* 3. RSVP Container */
         .rsvp-container {
             position: relative;
-            z-index: 10;
+            z-index: 10; /* Floats safely on layer 10, above the video */
             width: 90%;
             max-width: 600px;
             padding: 20px;
@@ -67,14 +67,13 @@
             font-size: 4rem;
             font-weight: 400;
             color: #3b332d; 
-            margin-bottom: 10px; /* Reduced to bring deadline text closer */
+            margin-bottom: 10px; 
             text-transform: uppercase;
             letter-spacing: 0.35em; 
             margin-left: 0.35em; 
             text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.8);
         }
 
-        /* New Deadline Subtitle */
         .deadline-text {
             font-family: 'Montserrat', sans-serif;
             font-size: 0.85rem;
@@ -82,7 +81,7 @@
             color: #4a4135;
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 40px; /* Spacing before the form starts */
+            margin-bottom: 40px; 
             text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
         }
 
@@ -238,7 +237,6 @@
                 letter-spacing: 1.5px;
             }
 
-            /* Strict 16px to prevent ALL mobile browsers from zooming */
             input, select {
                 font-size: 16px !important; 
                 padding: 8px 4px;
@@ -296,19 +294,23 @@
         // --- BULLETPROOF DEVICE DETECTION FOR VIDEO BACKGROUND ---
         const bgVideo = document.getElementById('bgVideo');
         
-        // This strictly looks at the device hardware signature (Android, iPhone, etc.) 
-        // This prevents the S24 from glitching back to the desktop video!
         const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 
         if (isMobileDevice) {
             bgVideo.src = 'background-mobile.mp4';
-            bgVideo.loop = false; // Video will play once and stop on mobile
+            bgVideo.loop = false; 
         } else {
             bgVideo.src = 'background.mp4';
-            bgVideo.loop = true;  // Video will continue looping on desktop
+            bgVideo.loop = true;  
         }
         
+        // THE FIX: Force the browser to load AND play the video via JavaScript
         bgVideo.load();
+        
+        // Browsers require a promise catch here just in case they block autoplay
+        bgVideo.play().catch(function(error) {
+            console.log("Browser autoplay blocked, video will remain paused.");
+        });
 
         // --- RSVP FORM LOGIC ---
         const formWrapper = document.getElementById('formWrapper');
