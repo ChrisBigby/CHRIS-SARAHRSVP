@@ -38,7 +38,7 @@
 
         /* Real-Time Validation UI */
         .input-wrapper { position: relative; width: 100%; }
-        .input-wrapper input { padding-right: 35px; } /* Prevents typing over the icon */
+        .input-wrapper input { padding-right: 35px; } 
         .validation-icon { position: absolute; right: 5px; top: 10px; font-size: 1.3rem; opacity: 0; transition: opacity 0.3s ease; font-family: 'Montserrat', sans-serif; font-weight: bold; text-shadow: none; }
         .validation-icon.show { opacity: 1; }
         .icon-loading { color: #b8925a; display: inline-block; animation: spin 1s linear infinite; }
@@ -133,7 +133,7 @@
                     <textarea name="message" placeholder="Write your warm wishes here..." rows="3"></textarea>
                 </div>
                 
-                <div id="errorMessage">We couldn't find an invitation matching that name. Please check your spelling and ensure it matches the name on your envelope.</div>
+                <div id="errorMessage">We couldn't find an invitation matching that name. Please check your spelling and make sure it matches exactly how it appears on your invitation.</div>
 
                 <button type="submit" id="submitBtn">Send Reply</button>
                 <p class="note-text">Note: You can only submit 1 response. If you have a change of mind, please reach out to us via FB Messenger.</p>
@@ -224,20 +224,18 @@
             const nameValue = nameInput.value.trim();
 
             if (nameValue === "") {
-                nameIcon.className = "validation-icon"; // Hides icon if empty
+                nameIcon.className = "validation-icon"; 
                 errorMessage.style.display = 'none';
                 return;
             }
 
-            // Shows loading spinner while waiting for user to stop typing
-            nameIcon.innerHTML = '&#8635;'; // Refresh symbol
+            nameIcon.innerHTML = '&#8635;'; 
             nameIcon.className = "validation-icon icon-loading show";
             errorMessage.style.display = 'none';
 
-            // Wait 800 milliseconds after they stop typing to check database
             typingTimer = setTimeout(() => {
                 const url = new URL(scriptURL);
-                url.searchParams.append("action", "validate"); // Tells script to ONLY validate
+                url.searchParams.append("action", "validate"); 
                 url.searchParams.append("name", nameValue);
                 url.searchParams.append("nocache", new Date().getTime());
 
@@ -245,15 +243,15 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data.result === 'valid') {
-                            nameIcon.innerHTML = '&#10003;'; // Green Checkmark
+                            nameIcon.innerHTML = '&#10003;'; 
                             nameIcon.className = "validation-icon icon-valid show";
                         } else {
-                            nameIcon.innerHTML = '&#10007;'; // Red X
+                            nameIcon.innerHTML = '&#10007;'; 
                             nameIcon.className = "validation-icon icon-invalid show";
                         }
                     })
                     .catch(err => {
-                        nameIcon.className = "validation-icon"; // Hide if network glitch
+                        nameIcon.className = "validation-icon"; 
                     });
             }, 800);
         });
@@ -270,11 +268,10 @@
             const attendingStatus = formData.get('attending'); 
             
             const url = new URL(scriptURL);
-            // Append all form data
             formData.forEach((value, key) => {
                 url.searchParams.append(key, value);
             });
-            url.searchParams.append("action", "submit"); // Tells script to SAVE
+            url.searchParams.append("action", "submit"); 
             url.searchParams.append("nocache", new Date().getTime());
 
             fetch(url.toString(), { method: 'GET', redirect: 'follow' })
@@ -283,7 +280,7 @@
                     if (data.result === 'not_invited') {
                         submitBtn.classList.remove('btn-loading');
                         submitBtn.innerText = 'Send Reply';
-                        errorMessage.innerText = "We couldn't find an invitation matching that name. Please check your spelling and ensure it matches the name on your envelope.";
+                        errorMessage.innerText = "We couldn't find an invitation matching that name. Please check your spelling and make sure it matches exactly how it appears on your invitation.";
                         errorMessage.style.display = 'block'; 
                     } else if (data.result === 'error') {
                         submitBtn.classList.remove('btn-loading');
