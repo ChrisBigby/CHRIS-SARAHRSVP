@@ -7,7 +7,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
 
     <style>
         /* Basic Reset */
@@ -47,7 +47,7 @@
             text-align: center;
         }
 
-        /* Form Wrapper (Holds Header & Form for smooth fading) */
+        /* Form Wrapper */
         #formWrapper {
             opacity: 1;
             transition: opacity 0.6s ease;
@@ -58,13 +58,16 @@
             pointer-events: none;
         }
 
-        /* Typography */
+        /* Modern Typography */
         h2 {
-            font-family: 'Alex Brush', cursive;
-            font-size: 5rem;
-            font-weight: normal;
-            color: #5c5041; 
-            margin-bottom: 20px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 4rem;
+            font-weight: 400;
+            color: #3b332d; 
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 0.35em; 
+            margin-left: 0.35em; 
             text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.8);
         }
 
@@ -73,9 +76,11 @@
             text-align: left;
             margin-bottom: 5px;
             color: #4a4135;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem;
-            font-style: italic;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 2px; 
             text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
         }
 
@@ -83,13 +88,14 @@
         input, select {
             width: 100%;
             padding: 10px 5px;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             background-color: transparent;
             border: none;
             border-bottom: 1.5px solid #7a6e5a;
             color: #3b3329;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.4rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
             box-sizing: border-box;
             outline: none;
             text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.8);
@@ -103,22 +109,23 @@
 
         input::placeholder {
             color: #9c9182;
-            font-style: italic;
+            font-weight: 300;
         }
 
         /* Elegant Button */
         button {
             width: 80%;
-            padding: 15px;
+            padding: 18px;
             margin-top: 10px;
             background-color: rgba(255, 255, 255, 0.3);
             color: #4a4135;
             border: 1.5px solid #7a6e5a;
             border-radius: 50px;
-            font-size: 1.4rem;
-            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 4px;
             cursor: pointer;
             transition: all 0.4s ease;
             backdrop-filter: blur(2px);
@@ -148,12 +155,26 @@
             display: none;
             opacity: 0;
             color: #4a5c4e;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.8rem;
-            font-style: italic;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 400;
+            letter-spacing: 1.5px;
             margin-top: 30px;
             text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
-            line-height: 1.4;
+            line-height: 1.8;
+        }
+        
+        /* Email link styling inside the message */
+        #dynamicMessage a {
+            color: #5c5041;
+            text-decoration: none;
+            border-bottom: 1px solid #5c5041;
+            transition: color 0.3s ease;
+        }
+        
+        #dynamicMessage a:hover {
+            color: #3b3329;
+            border-bottom: 1px solid #3b3329;
         }
 
         .fade-in-up {
@@ -211,15 +232,29 @@
         // *** PASTE YOUR GOOGLE SCRIPT URL HERE ***
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw278gjb0ayz_5eMSZb0We8evxxnxgmPTzUQiPg8rBAmXkCJMr6Jl-xKJXZGqdLXFhFBw/exec';
 
-        // Your Custom Messages
-        const msgReturnVisitor = "Hi there! Thank you so much for your previous response. We have everything we need and look forward to seeing you soon!";
+        // Custom Messages
+        const msgReturnVisitorYes = "Hi there! Thank you so much for your previous response. We have everything we need and look forward to seeing you soon!";
+        
+        const msgReturnVisitorNo = "Change of plans? If you can make it after all, we’d love to have you! Just let us know by emailing <a href='mailto:chrisubarre04@gmail.com'>chrisubarre04@gmail.com</a> or <a href='mailto:castorsarahjean03@gmail.com'>castorsarahjean03@gmail.com</a>.";
+        
         const msgAccept = "Thank you! Your response has been beautifully recorded.";
         const msgDecline = "We completely understand, no worries at all! Your warm wishes are more than enough to bless our special day.";
 
+        // Clean out older versions of the script from your browser memory
+        localStorage.removeItem('weddingRsvpSubmitted');
+
         // 1. CHECK MEMORY ON PAGE LOAD
-        if (localStorage.getItem('weddingRsvpStatus')) {
+        const previousStatus = localStorage.getItem('weddingRsvpStatus');
+        if (previousStatus) {
             formWrapper.style.display = 'none';
-            dynamicMessage.innerText = msgReturnVisitor;
+            
+            // Strictly check if the saved memory is exactly "No"
+            if (previousStatus === 'No') {
+                dynamicMessage.innerHTML = msgReturnVisitorNo;
+            } else {
+                dynamicMessage.innerText = msgReturnVisitorYes;
+            }
+            
             dynamicMessage.style.display = 'block';
             dynamicMessage.style.opacity = '1'; 
         }
@@ -232,25 +267,24 @@
             submitBtn.innerText = 'Sending...';
 
             const formData = new FormData(form);
-            const attendingStatus = form.attending.value; // Grabs "Yes" or "No"
+            
+            // THE FIX: Grab the value directly from the FormData so it never glitches
+            const attendingStatus = formData.get('attending'); 
 
             fetch(scriptURL, { method: 'POST', body: formData })
                 .then(response => {
-                    // Remember they submitted
+                    // Save exactly "Yes" or "No" to the browser's memory
                     localStorage.setItem('weddingRsvpStatus', attendingStatus);
-
-                    // Fade out the entire form wrapper (including the RSVP title)
+                    
                     formWrapper.classList.add('fade-out');
                     
-                    // Wait for fade out, hide it completely, update text based on choice, and fade in message
                     setTimeout(() => {
                         formWrapper.style.display = 'none';
                         
-                        // Dynamically choose message based on Yes/No
-                        if (attendingStatus === 'Yes') {
-                            dynamicMessage.innerText = msgAccept;
-                        } else {
+                        if (attendingStatus === 'No') {
                             dynamicMessage.innerText = msgDecline;
+                        } else {
+                            dynamicMessage.innerText = msgAccept;
                         }
 
                         dynamicMessage.classList.add('fade-in-up');
