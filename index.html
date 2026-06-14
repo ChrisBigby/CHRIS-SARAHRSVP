@@ -232,7 +232,7 @@
 </head>
 <body>
 
-    <video autoplay muted loop playsinline id="bgVideo"></video>
+    <video autoplay muted playsinline id="bgVideo"></video>
 
     <div class="rsvp-container">
         
@@ -261,13 +261,17 @@
         // --- DEVICE DETECTION FOR VIDEO BACKGROUND ---
         const bgVideo = document.getElementById('bgVideo');
         
-        // If the screen is 768 pixels or narrower (mobile/tablet), load the mobile video. 
-        // Otherwise, load the desktop video.
-        if (window.innerWidth <= 768) {
+        // Uses matchMedia to accurately detect mobile screens
+        if (window.matchMedia("(max-width: 768px)").matches) {
             bgVideo.src = 'background-mobile.mp4';
+            bgVideo.loop = false; // Video will play once and stop on mobile
         } else {
             bgVideo.src = 'background.mp4';
+            bgVideo.loop = true;  // Video will continue looping on desktop
         }
+        
+        // CRITICAL FIX: Forces Safari/Chrome mobile to actually download the new video file
+        bgVideo.load();
 
         // --- RSVP FORM LOGIC ---
         const formWrapper = document.getElementById('formWrapper');
@@ -283,9 +287,6 @@
         const msgReturnVisitorNo = "Change of plans? If you can make it after all, we’d love to have you! Just let us know by emailing <a href='mailto:chrisubarre04@gmail.com'>chrisubarre04@gmail.com</a> or <a href='mailto:castorsarahjean03@gmail.com'>castorsarahjean03@gmail.com</a>.";
         const msgAccept = "Thank you! Your response has been beautifully recorded.";
         const msgDecline = "We completely understand, no worries at all! Your warm wishes are more than enough to bless our special day.";
-
-        // Clean out older versions of the script from your browser memory
-        localStorage.removeItem('weddingRsvpSubmitted');
 
         // CHECK MEMORY ON PAGE LOAD
         const previousStatus = localStorage.getItem('weddingRsvpStatus');
