@@ -37,7 +37,7 @@
             object-fit: cover; 
         }
 
-        /* RSVP Container - Desktop Default */
+        /* RSVP Container */
         .rsvp-container {
             position: relative;
             z-index: 10;
@@ -58,7 +58,7 @@
             pointer-events: none;
         }
 
-        /* Modern Typography - Desktop Default */
+        /* Modern Typography */
         h2 {
             font-family: 'Montserrat', sans-serif;
             font-size: 4rem;
@@ -192,51 +192,47 @@
             }
         }
 
-        /* =========================================
-           MOBILE RESPONSIVENESS
-           ========================================= */
+        /* MOBILE RESPONSIVENESS */
         @media (max-width: 768px) {
             .rsvp-container {
-                width: 95%; /* Gives a little more breathing room on the sides */
+                width: 95%; 
                 padding: 10px;
             }
 
             h2 {
-                font-size: 2.8rem; /* Shrinks the giant header so it fits on screen */
-                letter-spacing: 0.25em; /* Slightly tighter spacing for small screens */
+                font-size: 2.8rem; 
+                letter-spacing: 0.25em; 
                 margin-left: 0.25em;
                 margin-bottom: 20px;
             }
 
             label {
-                font-size: 0.9rem; /* Slightly smaller labels */
+                font-size: 0.9rem; 
                 letter-spacing: 1.5px;
             }
 
             input, select {
-                font-size: 1rem; /* Adjusts input text size to prevent mobile browser zooming */
+                font-size: 1rem; 
                 padding: 8px 4px;
                 margin-bottom: 25px;
             }
 
             button {
-                width: 90%; /* Makes the button wider on small screens to easily tap */
+                width: 90%; 
                 padding: 15px;
                 font-size: 0.9rem;
                 letter-spacing: 3px;
             }
 
             #dynamicMessage {
-                font-size: 1.1rem; /* Makes the message slightly smaller to fit better */
+                font-size: 1.1rem; 
             }
         }
     </style>
 </head>
 <body>
 
-    <video autoplay muted loop playsinline id="bgVideo">
-        <source src="background.mp4" type="video/mp4">
-    </video>
+    <video autoplay muted loop playsinline id="bgVideo"></video>
 
     <div class="rsvp-container">
         
@@ -262,6 +258,18 @@
     </div>
 
     <script>
+        // --- DEVICE DETECTION FOR VIDEO BACKGROUND ---
+        const bgVideo = document.getElementById('bgVideo');
+        
+        // If the screen is 768 pixels or narrower (mobile/tablet), load the mobile video. 
+        // Otherwise, load the desktop video.
+        if (window.innerWidth <= 768) {
+            bgVideo.src = 'background-mobile.mp4';
+        } else {
+            bgVideo.src = 'background.mp4';
+        }
+
+        // --- RSVP FORM LOGIC ---
         const formWrapper = document.getElementById('formWrapper');
         const form = document.getElementById('rsvpForm');
         const submitBtn = document.getElementById('submitBtn');
@@ -272,13 +280,14 @@
 
         // Custom Messages
         const msgReturnVisitorYes = "Hi there! Thank you so much for your previous response. We have everything we need and look forward to seeing you soon!";
-        
         const msgReturnVisitorNo = "Change of plans? If you can make it after all, we’d love to have you! Just let us know by emailing <a href='mailto:chrisubarre04@gmail.com'>chrisubarre04@gmail.com</a> or <a href='mailto:castorsarahjean03@gmail.com'>castorsarahjean03@gmail.com</a>.";
-        
         const msgAccept = "Thank you! Your response has been beautifully recorded.";
         const msgDecline = "We completely understand, no worries at all! Your warm wishes are more than enough to bless our special day.";
 
-        // 1. CHECK MEMORY ON PAGE LOAD
+        // Clean out older versions of the script from your browser memory
+        localStorage.removeItem('weddingRsvpSubmitted');
+
+        // CHECK MEMORY ON PAGE LOAD
         const previousStatus = localStorage.getItem('weddingRsvpStatus');
         if (previousStatus) {
             formWrapper.style.display = 'none';
@@ -293,7 +302,7 @@
             dynamicMessage.style.opacity = '1'; 
         }
 
-        // 2. HANDLE NEW SUBMISSIONS
+        // HANDLE NEW SUBMISSIONS
         form.addEventListener('submit', e => {
             e.preventDefault();
             
