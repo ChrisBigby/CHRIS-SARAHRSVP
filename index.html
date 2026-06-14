@@ -230,6 +230,25 @@
             text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
             line-height: 1.8;
         }
+
+        /* New Styling for the "Thank You!" Header */
+        .thank-you-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 400;
+            color: #3b332d; 
+            text-transform: uppercase;
+            letter-spacing: 0.25em; 
+            display: block; /* Forces the text below it onto a new line */
+            margin-bottom: 20px; 
+            text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.8);
+        }
+
+        .message-subtitle {
+            display: block;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
         
         #dynamicMessage a {
             color: #5c5041;
@@ -299,6 +318,16 @@
             #dynamicMessage {
                 font-size: 1.05rem; 
             }
+
+            /* Scales down the "Thank You" header for phones */
+            .thank-you-title {
+                font-size: 2.2rem;
+                letter-spacing: 0.15em;
+            }
+
+            .message-subtitle {
+                font-size: 1.05rem;
+            }
         }
     </style>
 </head>
@@ -351,9 +380,6 @@
             bgVideo.src = 'background-mobile.mp4';
             bgVideo.loop = false; 
             
-            // THE FIX: We tell the video to check its time constantly.
-            // When it is 0.5 seconds away from the end, we forcefully PAUSE it. 
-            // It will never reach the end, preventing the browser from hiding it!
             bgVideo.addEventListener('timeupdate', function() {
                 if (bgVideo.duration && bgVideo.currentTime >= bgVideo.duration - 0.5) {
                     bgVideo.pause();
@@ -393,10 +419,10 @@
         // *** PASTE YOUR GOOGLE SCRIPT URL HERE ***
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw278gjb0ayz_5eMSZb0We8evxxnxgmPTzUQiPg8rBAmXkCJMr6Jl-xKJXZGqdLXFhFBw/exec';
 
-        // Updated Custom Messages
+        // Updated Custom Messages (msgAccept now uses HTML tags for the custom styling)
         const msgReturnVisitorYes = "Hi there! Thank you so much for your previous response. We have everything we need and look forward to seeing you soon!";
         const msgReturnVisitorNo = "Change of plans? If you can make it after all, we’d love to have you! Just let us know by emailing <a href='mailto:chrisubarre04@gmail.com'>chrisubarre04@gmail.com</a> or <a href='mailto:castorsarahjean03@gmail.com'>castorsarahjean03@gmail.com</a>.";
-        const msgAccept = "Thank you! Your response has been received. We're excited to celebrate our big day with you!";
+        const msgAccept = "<span class='thank-you-title'>Thank you!</span><span class='message-subtitle'>Your response has been received. We're excited to celebrate our big day with you!</span>";
         const msgDecline = "We completely understand, no worries at all! Your warm wishes are more than enough to bless our special day.";
 
         // CHECK MEMORY ON PAGE LOAD
@@ -404,10 +430,11 @@
         if (previousStatus) {
             formWrapper.style.display = 'none';
             
+            // Using innerHTML so it reads the HTML tags properly
             if (previousStatus === 'No') {
                 dynamicMessage.innerHTML = msgReturnVisitorNo;
             } else {
-                dynamicMessage.innerText = msgReturnVisitorYes;
+                dynamicMessage.innerHTML = msgReturnVisitorYes;
             }
             
             dynamicMessage.style.display = 'block';
@@ -432,10 +459,11 @@
                     setTimeout(() => {
                         formWrapper.style.display = 'none';
                         
+                        // Using innerHTML so it reads the HTML tags properly
                         if (attendingStatus === 'No') {
-                            dynamicMessage.innerText = msgDecline;
+                            dynamicMessage.innerHTML = msgDecline;
                         } else {
-                            dynamicMessage.innerText = msgAccept;
+                            dynamicMessage.innerHTML = msgAccept;
                         }
 
                         dynamicMessage.classList.add('fade-in-up');
