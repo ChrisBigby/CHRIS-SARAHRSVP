@@ -37,7 +37,7 @@
             object-fit: cover; 
         }
 
-        /* RSVP Container */
+        /* RSVP Container - Desktop Default */
         .rsvp-container {
             position: relative;
             z-index: 10;
@@ -58,7 +58,7 @@
             pointer-events: none;
         }
 
-        /* Modern Typography */
+        /* Modern Typography - Desktop Default */
         h2 {
             font-family: 'Montserrat', sans-serif;
             font-size: 4rem;
@@ -164,7 +164,6 @@
             line-height: 1.8;
         }
         
-        /* Email link styling inside the message */
         #dynamicMessage a {
             color: #5c5041;
             text-decoration: none;
@@ -190,6 +189,45 @@
             100% {
                 opacity: 1;
                 transform: translateY(0);
+            }
+        }
+
+        /* =========================================
+           MOBILE RESPONSIVENESS
+           ========================================= */
+        @media (max-width: 768px) {
+            .rsvp-container {
+                width: 95%; /* Gives a little more breathing room on the sides */
+                padding: 10px;
+            }
+
+            h2 {
+                font-size: 2.8rem; /* Shrinks the giant header so it fits on screen */
+                letter-spacing: 0.25em; /* Slightly tighter spacing for small screens */
+                margin-left: 0.25em;
+                margin-bottom: 20px;
+            }
+
+            label {
+                font-size: 0.9rem; /* Slightly smaller labels */
+                letter-spacing: 1.5px;
+            }
+
+            input, select {
+                font-size: 1rem; /* Adjusts input text size to prevent mobile browser zooming */
+                padding: 8px 4px;
+                margin-bottom: 25px;
+            }
+
+            button {
+                width: 90%; /* Makes the button wider on small screens to easily tap */
+                padding: 15px;
+                font-size: 0.9rem;
+                letter-spacing: 3px;
+            }
+
+            #dynamicMessage {
+                font-size: 1.1rem; /* Makes the message slightly smaller to fit better */
             }
         }
     </style>
@@ -240,15 +278,11 @@
         const msgAccept = "Thank you! Your response has been beautifully recorded.";
         const msgDecline = "We completely understand, no worries at all! Your warm wishes are more than enough to bless our special day.";
 
-        // Clean out older versions of the script from your browser memory
-        localStorage.removeItem('weddingRsvpSubmitted');
-
         // 1. CHECK MEMORY ON PAGE LOAD
         const previousStatus = localStorage.getItem('weddingRsvpStatus');
         if (previousStatus) {
             formWrapper.style.display = 'none';
             
-            // Strictly check if the saved memory is exactly "No"
             if (previousStatus === 'No') {
                 dynamicMessage.innerHTML = msgReturnVisitorNo;
             } else {
@@ -267,15 +301,11 @@
             submitBtn.innerText = 'Sending...';
 
             const formData = new FormData(form);
-            
-            // THE FIX: Grab the value directly from the FormData so it never glitches
             const attendingStatus = formData.get('attending'); 
 
             fetch(scriptURL, { method: 'POST', body: formData })
                 .then(response => {
-                    // Save exactly "Yes" or "No" to the browser's memory
                     localStorage.setItem('weddingRsvpStatus', attendingStatus);
-                    
                     formWrapper.classList.add('fade-out');
                     
                     setTimeout(() => {
