@@ -10,13 +10,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* 1. Basic Reset & Anti-Smart-Zoom */
+        /* Basic Reset & Anti-Smart-Zoom */
         html, body {
             margin: 0;
             padding: 0;
             -webkit-text-size-adjust: 100%; 
             text-size-adjust: 100%;
-            background-color: #f6f0e6; /* Fallback color if internet is slow */
+            background-color: #f6f0e6; 
         }
 
         body {
@@ -28,29 +28,31 @@
             position: relative;
         }
 
-        /* 2. Full-Screen Video Background */
+        /* Full-Screen Video Background */
         #bgVideo {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: 1; /* THE FIX: Pulled forward to layer 1 so it's never hidden behind the body color */
+            z-index: 1; 
             object-fit: cover; 
             object-position: center; 
         }
 
-        /* 3. RSVP Container */
+        /* RSVP Container */
         .rsvp-container {
             position: relative;
-            z-index: 10; /* Floats safely on layer 10, above the video */
+            z-index: 10; 
             width: 90%;
             max-width: 600px;
             padding: 20px;
             text-align: center;
+            max-height: 95vh;
+            overflow-y: auto; /* Allows scrolling inside the form if the screen is very small */
         }
 
-        /* 4. Form Wrapper */
+        /* Form Wrapper */
         #formWrapper {
             opacity: 1;
             transition: opacity 0.6s ease;
@@ -61,7 +63,7 @@
             pointer-events: none;
         }
 
-        /* 5. Modern Typography */
+        /* Modern Typography */
         h2 {
             font-family: 'Montserrat', sans-serif;
             font-size: 4rem;
@@ -98,11 +100,11 @@
             text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
         }
 
-        /* 6. Seamless Input Fields */
-        input, select {
+        /* Seamless Input Fields & Textarea */
+        input, select, textarea {
             width: 100%;
             padding: 10px 5px;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
             background-color: transparent;
             border: none;
             border-bottom: 1.5px solid #7a6e5a;
@@ -117,16 +119,55 @@
             border-radius: 0;
         }
 
-        input:focus, select:focus {
+        textarea {
+            resize: none;
+            margin-bottom: 15px;
+        }
+
+        input:focus, select:focus, textarea:focus {
             border-bottom: 2px solid #3b3329;
         }
 
-        input::placeholder {
+        input::placeholder, textarea::placeholder {
             color: #9c9182;
             font-weight: 300;
         }
 
-        /* 7. Elegant Button & Note */
+        /* Message Toggle Button & Animation */
+        .message-toggle {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #5c5041;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            margin: 0 auto 25px auto;
+            display: inline-block;
+            border-bottom: 1px dashed #7a6e5a;
+            transition: color 0.3s ease;
+            text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
+        }
+
+        .message-toggle:hover {
+            color: #3b3329;
+            border-bottom-style: solid;
+        }
+
+        .message-container {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.6s ease, opacity 0.6s ease;
+        }
+
+        /* When this class is added via JS, the box elegantly slides open */
+        .message-container.open {
+            max-height: 150px;
+            opacity: 1;
+        }
+
+        /* Elegant Submit Button */
         button {
             width: 80%;
             padding: 18px;
@@ -154,10 +195,12 @@
             font-family: 'Montserrat', sans-serif;
             font-size: 0.75rem;
             font-weight: 300;
-            color: #5c5041;
+            color: #3b332d;
             margin-top: 20px;
             font-style: italic;
             letter-spacing: 1px;
+            line-height: 1.5;
+            text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.8);
         }
 
         /* Button Loading Animation */
@@ -174,7 +217,7 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* 8. Dynamic Message Styling */
+        /* Dynamic Message Styling */
         #dynamicMessage {
             display: none;
             opacity: 0;
@@ -210,9 +253,7 @@
             100% { opacity: 1; transform: translateY(0); }
         }
 
-        /* =========================================
-           MOBILE RESPONSIVENESS
-           ========================================= */
+        /* MOBILE RESPONSIVENESS */
         @media (max-width: 768px) {
             .rsvp-container {
                 width: 95%; 
@@ -237,8 +278,8 @@
                 letter-spacing: 1.5px;
             }
 
-            input, select {
-                font-size: 16px !important; 
+            input, select, textarea {
+                font-size: 16px !important; /* Strict 16px to prevent zoom */
                 padding: 8px 4px;
                 margin-bottom: 25px;
             }
@@ -274,15 +315,24 @@
                 <label>Name:</label>
                 <input type="text" name="name" placeholder="Please enter your full name" required>
                 
+                <label>Email:</label>
+                <input type="email" name="email" placeholder="Please enter your email address" required>
+                
                 <label>Will you be attending?</label>
                 <select name="attending" required>
                     <option value="" disabled selected>Kindly select an option</option>
                     <option value="Yes">Joyfully Accepts</option>
                     <option value="No">Regretfully Declines</option>
                 </select>
+
+                <div id="messageToggle" class="message-toggle">Leave a message for the couple +</div>
+                
+                <div id="messageContainer" class="message-container">
+                    <textarea name="message" placeholder="Write your warm wishes here..." rows="3"></textarea>
+                </div>
                 
                 <button type="submit" id="submitBtn">Send Reply</button>
-                <p class="note-text">Note: You can only submit 1 response.</p>
+                <p class="note-text">Note: You can only submit 1 response. If you have a change of mind, please reach out to us via FB Messenger.</p>
             </form>
         </div>
 
@@ -291,7 +341,7 @@
     </div>
 
     <script>
-        // --- BULLETPROOF DEVICE DETECTION FOR VIDEO BACKGROUND ---
+        // --- BULLETPROOF DEVICE DETECTION & VIDEO FREEZE ---
         const bgVideo = document.getElementById('bgVideo');
         
         const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
@@ -299,17 +349,40 @@
         if (isMobileDevice) {
             bgVideo.src = 'background-mobile.mp4';
             bgVideo.loop = false; 
+            
+            // THE FIX FOR DISAPPEARING VIDEO: 
+            // Freezes the video exactly 0.1 seconds before it natively ends so it never clears the frame.
+            bgVideo.addEventListener('timeupdate', function() {
+                if (this.duration && this.currentTime >= this.duration - 0.1) {
+                    this.pause();
+                }
+            });
+
         } else {
             bgVideo.src = 'background.mp4';
             bgVideo.loop = true;  
         }
         
-        // THE FIX: Force the browser to load AND play the video via JavaScript
         bgVideo.load();
         
-        // Browsers require a promise catch here just in case they block autoplay
         bgVideo.play().catch(function(error) {
             console.log("Browser autoplay blocked, video will remain paused.");
+        });
+
+        // --- MESSAGE TOGGLE ANIMATION ---
+        const messageToggle = document.getElementById('messageToggle');
+        const messageContainer = document.getElementById('messageContainer');
+
+        messageToggle.addEventListener('click', () => {
+            // Toggles the open class to animate the box
+            messageContainer.classList.toggle('open');
+            
+            // Changes the text of the button depending on if it's open or closed
+            if (messageContainer.classList.contains('open')) {
+                messageToggle.innerText = "Leave a message for the couple -";
+            } else {
+                messageToggle.innerText = "Leave a message for the couple +";
+            }
         });
 
         // --- RSVP FORM LOGIC ---
@@ -321,10 +394,10 @@
         // *** PASTE YOUR GOOGLE SCRIPT URL HERE ***
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw278gjb0ayz_5eMSZb0We8evxxnxgmPTzUQiPg8rBAmXkCJMr6Jl-xKJXZGqdLXFhFBw/exec';
 
-        // Custom Messages
+        // Updated Custom Messages
         const msgReturnVisitorYes = "Hi there! Thank you so much for your previous response. We have everything we need and look forward to seeing you soon!";
         const msgReturnVisitorNo = "Change of plans? If you can make it after all, we’d love to have you! Just let us know by emailing <a href='mailto:chrisubarre04@gmail.com'>chrisubarre04@gmail.com</a> or <a href='mailto:castorsarahjean03@gmail.com'>castorsarahjean03@gmail.com</a>.";
-        const msgAccept = "Thank you! Your response has been beautifully recorded.";
+        const msgAccept = "Thank you! Your response has been received. We're excited to celebrate our big day with you!";
         const msgDecline = "We completely understand, no worries at all! Your warm wishes are more than enough to bless our special day.";
 
         // CHECK MEMORY ON PAGE LOAD
