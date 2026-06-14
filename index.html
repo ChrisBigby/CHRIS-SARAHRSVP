@@ -11,9 +11,9 @@
 
     <style>
         /* Basic Reset & Anti-Smart-Zoom */
-        html, body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background-color: #f6f0e6; overflow: hidden; position: relative; }
+        html, body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background-color: #f6f0e6; overflow: hidden; height: 100vh; }
         
-        #bgVideo { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; object-fit: cover; object-position: center; }
+        #bgVideo { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; object-fit: cover; object-position: center; }
         
         /* The container now acts as a full-screen window, so scrolling works EVERYWHERE */
         .rsvp-container { 
@@ -24,9 +24,6 @@
             height: 100vh; 
             z-index: 10; 
             overflow-y: auto; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
             
             /* Hides the scrollbar completely */
             scrollbar-width: none; 
@@ -34,13 +31,18 @@
         }
         .rsvp-container::-webkit-scrollbar { display: none; }
 
-        /* The form is perfectly centered inside the full-screen container */
+        /* The flex-wrapper ensures the form is centered inside the scrollable container */
+        .flex-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            padding: 40px 0; /* Gives space so the form doesn't hit the top/bottom edges when scrolling */
+        }
+
         #formWrapper { 
             width: 90%; 
             max-width: 600px; 
-            margin: auto; 
-            padding: 40px 0; 
-            flex-shrink: 0; 
             text-align: center;
             opacity: 1; 
             transition: opacity 0.6s ease; 
@@ -90,7 +92,7 @@
 
         .note-text { font-family: 'Unna', serif; font-size: 0.85rem; color: #3b332d; margin-top: 20px; font-style: italic; letter-spacing: 1px; line-height: 1.5; text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.8); }
 
-        #dynamicMessage { display: none; opacity: 0; color: #4a5c4e; font-family: 'Unna', serif; font-size: 1.3rem; letter-spacing: 1.5px; margin: auto; padding: 40px 20px; text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9); line-height: 1.8; text-align: center; max-width: 600px; flex-shrink: 0; }
+        #dynamicMessage { display: none; opacity: 0; color: #4a5c4e; font-family: 'Unna', serif; font-size: 1.3rem; letter-spacing: 1.5px; margin: auto; text-align: center; text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9); line-height: 1.8; width: 90%; max-width: 600px; padding: 40px 0;}
         .thank-you-title { font-family: 'Unna', serif; font-size: 4.5rem; font-weight: 400; color: #3b332d; text-transform: uppercase; letter-spacing: 0.25em; display: block; margin-bottom: 20px; text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.8); }
         .message-subtitle { display: block; font-size: 1.3rem; line-height: 1.6; }
         #dynamicMessage a { color: #5c5041; text-decoration: none; border-bottom: 1px solid #5c5041; transition: color 0.3s ease; }
@@ -99,7 +101,7 @@
         @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
 
         @media (max-width: 768px) {
-            #formWrapper { width: 95%; padding: 20px 0; }
+            #formWrapper { padding: 20px 0; }
             h2 { font-size: 3.5rem; letter-spacing: 0.25em; margin-left: 0.25em; margin-bottom: 15px; }
             .deadline-text { font-size: 0.75rem; margin-bottom: 20px; letter-spacing: 1px; }
             .countdown-container { gap: 8px; margin-bottom: 30px; }
@@ -123,52 +125,56 @@
     <video autoplay muted playsinline id="bgVideo"></video>
 
     <div class="rsvp-container">
-        <div id="formWrapper">
-            <h2>RSVP</h2>
-            <p class="deadline-text">The favor of your reply is requested on or before <span style="white-space: nowrap;">August 10, 2026</span>.</p>
+        <div class="flex-wrapper">
             
-            <div class="countdown-container">
-                <div class="countdown-block"><span class="countdown-number" id="cd-days">00</span><span class="countdown-label">Days</span></div>
-                <span class="countdown-separator">&middot;</span>
-                <div class="countdown-block"><span class="countdown-number" id="cd-hours">00</span><span class="countdown-label">Hours</span></div>
-                <span class="countdown-separator">&middot;</span>
-                <div class="countdown-block"><span class="countdown-number" id="cd-minutes">00</span><span class="countdown-label">Minutes</span></div>
-                <span class="countdown-separator">&middot;</span>
-                <div class="countdown-block"><span class="countdown-number" id="cd-seconds">00</span><span class="countdown-label">Seconds</span></div>
+            <div id="formWrapper">
+                <h2>RSVP</h2>
+                <p class="deadline-text">The favor of your reply is requested on or before <span style="white-space: nowrap;">August 10, 2026</span>.</p>
+                
+                <div class="countdown-container">
+                    <div class="countdown-block"><span class="countdown-number" id="cd-days">00</span><span class="countdown-label">Days</span></div>
+                    <span class="countdown-separator">&middot;</span>
+                    <div class="countdown-block"><span class="countdown-number" id="cd-hours">00</span><span class="countdown-label">Hours</span></div>
+                    <span class="countdown-separator">&middot;</span>
+                    <div class="countdown-block"><span class="countdown-number" id="cd-minutes">00</span><span class="countdown-label">Minutes</span></div>
+                    <span class="countdown-separator">&middot;</span>
+                    <div class="countdown-block"><span class="countdown-number" id="cd-seconds">00</span><span class="countdown-label">Seconds</span></div>
+                </div>
+
+                <form id="rsvpForm">
+                    <label>Name:</label>
+                    <span class="input-helper">Format: First and Last Name (Not case sensitive)</span>
+                    
+                    <div class="input-wrapper">
+                        <input type="text" id="nameInput" name="name" placeholder="e.g. John Doe" required>
+                        <span id="nameIcon" class="validation-icon"></span>
+                    </div>
+                    
+                    <label>Email:</label>
+                    <input type="email" name="email" placeholder="Please enter your email address" required>
+                    
+                    <label>Will you be attending?</label>
+                    <select name="attending" required>
+                        <option value="" disabled selected>Kindly select an option</option>
+                        <option value="Yes">Joyfully Accepts</option>
+                        <option value="No">Regretfully Declines</option>
+                    </select>
+
+                    <div id="messageToggle" class="message-toggle">Leave a message for the couple +</div>
+                    <div id="messageContainer" class="message-container">
+                        <textarea name="message" placeholder="Write your warm wishes here..." rows="3"></textarea>
+                    </div>
+                    
+                    <div id="errorMessage">We couldn't find an invitation matching that name. Please check your spelling and make sure it matches exactly how it appears on your invitation.</div>
+
+                    <button type="submit" id="submitBtn">Send Reply</button>
+                    <p class="note-text">Note: You can only submit 1 response. If you have a change of mind, please reach out to us via FB Messenger.</p>
+                </form>
             </div>
 
-            <form id="rsvpForm">
-                <label>Name:</label>
-                <span class="input-helper">Format: First and Last Name (Not case sensitive)</span>
-                
-                <div class="input-wrapper">
-                    <input type="text" id="nameInput" name="name" placeholder="e.g. John Doe" required>
-                    <span id="nameIcon" class="validation-icon"></span>
-                </div>
-                
-                <label>Email:</label>
-                <input type="email" name="email" placeholder="Please enter your email address" required>
-                
-                <label>Will you be attending?</label>
-                <select name="attending" required>
-                    <option value="" disabled selected>Kindly select an option</option>
-                    <option value="Yes">Joyfully Accepts</option>
-                    <option value="No">Regretfully Declines</option>
-                </select>
-
-                <div id="messageToggle" class="message-toggle">Leave a message for the couple +</div>
-                <div id="messageContainer" class="message-container">
-                    <textarea name="message" placeholder="Write your warm wishes here..." rows="3"></textarea>
-                </div>
-                
-                <div id="errorMessage">We couldn't find an invitation matching that name. Please check your spelling and make sure it matches exactly how it appears on your invitation.</div>
-
-                <button type="submit" id="submitBtn">Send Reply</button>
-                <p class="note-text">Note: You can only submit 1 response. If you have a change of mind, please reach out to us via FB Messenger.</p>
-            </form>
+            <p id="dynamicMessage"></p>
+            
         </div>
-
-        <p id="dynamicMessage"></p>
     </div>
 
     <script>
