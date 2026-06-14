@@ -11,291 +11,58 @@
 
     <style>
         /* Basic Reset & Anti-Smart-Zoom */
-        html, body {
-            margin: 0;
-            padding: 0;
-            -webkit-text-size-adjust: 100%; 
-            text-size-adjust: 100%;
-            background-color: #f6f0e6; 
-        }
+        html, body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background-color: #f6f0e6; }
+        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; position: relative; }
+        
+        #bgVideo { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; object-fit: cover; object-position: center; }
+        .rsvp-container { position: relative; z-index: 10; width: 90%; max-width: 600px; padding: 20px; text-align: center; max-height: 95vh; overflow-y: auto; }
+        #formWrapper { opacity: 1; transition: opacity 0.6s ease; }
+        #formWrapper.fade-out { opacity: 0; pointer-events: none; }
 
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-            position: relative;
-        }
+        /* Typography */
+        h2 { font-family: 'Unna', serif; font-size: 5rem; font-weight: 400; color: #3b332d; margin-top: 0; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.35em; margin-left: 0.35em; text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.8); }
+        .deadline-text { font-family: 'Unna', serif; font-size: 0.95rem; font-weight: 400; color: #4a4135; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9); line-height: 1.6; }
 
-        #bgVideo {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 1; 
-            object-fit: cover; 
-            object-position: center; 
-        }
+        /* Countdown */
+        .countdown-container { display: flex; justify-content: center; align-items: flex-start; gap: 15px; margin-bottom: 40px; }
+        .countdown-block { display: flex; flex-direction: column; align-items: center; width: 70px; }
+        .countdown-number { font-family: 'Unna', serif; font-size: 3.2rem; font-weight: 700; color: #b8925a; line-height: 1; text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.8); }
+        .countdown-label { font-family: 'Montserrat', sans-serif; font-size: 0.6rem; font-weight: 500; color: #5c5041; text-transform: uppercase; letter-spacing: 2px; margin-top: 12px; }
+        .countdown-separator { font-family: 'Unna', serif; font-size: 2rem; color: #b8925a; line-height: 1.2; margin-top: 8px; opacity: 0.7; }
 
-        .rsvp-container {
-            position: relative;
-            z-index: 10; 
-            width: 90%;
-            max-width: 600px;
-            padding: 20px;
-            text-align: center;
-            max-height: 95vh;
-            overflow-y: auto; 
-        }
-
-        #formWrapper {
-            opacity: 1;
-            transition: opacity 0.6s ease;
-        }
-
-        #formWrapper.fade-out {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* Elegant Unna Typography */
-        h2 {
-            font-family: 'Unna', serif;
-            font-size: 5rem; 
-            font-weight: 400;
-            color: #3b332d; 
-            margin-top: 0;
-            margin-bottom: 20px; 
-            text-transform: uppercase;
-            letter-spacing: 0.35em; 
-            margin-left: 0.35em; 
-            text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.8);
-        }
-
-        .deadline-text {
-            font-family: 'Unna', serif;
-            font-size: 0.95rem; 
-            font-weight: 400;
-            color: #4a4135;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 25px; 
-            text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
-            line-height: 1.6;
-        }
-
-        /* Countdown Timer */
-        .countdown-container {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            gap: 15px;
-            margin-bottom: 40px;
-        }
-
-        .countdown-block {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 70px;
-        }
-
-        .countdown-number {
-            font-family: 'Unna', serif;
-            font-size: 3.2rem;
-            font-weight: 700;
-            color: #b8925a; 
-            line-height: 1;
-            text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.8);
-        }
-
-        .countdown-label {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.6rem;
-            font-weight: 500;
-            color: #5c5041;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 12px;
-        }
-
-        .countdown-separator {
-            font-family: 'Unna', serif;
-            font-size: 2rem;
-            color: #b8925a;
-            line-height: 1.2;
-            margin-top: 8px; 
-            opacity: 0.7;
-        }
-
-        /* Form Elements */
-        label {
-            display: block;
-            text-align: left;
-            margin-bottom: 5px;
-            color: #4a4135;
-            font-family: 'Unna', serif;
-            font-size: 1.1rem;
-            font-weight: 400;
-            text-transform: uppercase;
-            letter-spacing: 2px; 
-            text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
-        }
-
-        .input-helper {
-            display: block;
-            text-align: left;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.7rem;
-            color: #5c5041;
-            font-style: italic;
-            margin-bottom: 10px;
-            text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.8);
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 10px 5px;
-            margin-bottom: 25px;
-            background-color: transparent;
-            border: none;
-            border-bottom: 1.5px solid #7a6e5a;
-            color: #3b3329;
-            font-family: 'Unna', serif;
-            font-size: 1.2rem;
-            letter-spacing: 1px;
-            box-sizing: border-box;
-            outline: none;
-            text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.8);
-            -webkit-appearance: none;
-            border-radius: 0;
-        }
-
+        /* Form */
+        label { display: block; text-align: left; margin-bottom: 5px; color: #4a4135; font-family: 'Unna', serif; font-size: 1.1rem; font-weight: 400; text-transform: uppercase; letter-spacing: 2px; text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9); }
+        .input-helper { display: block; text-align: left; font-family: 'Montserrat', sans-serif; font-size: 0.7rem; color: #5c5041; font-style: italic; margin-bottom: 10px; text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.8); }
+        input, select, textarea { width: 100%; padding: 10px 5px; margin-bottom: 25px; background-color: transparent; border: none; border-bottom: 1.5px solid #7a6e5a; color: #3b3329; font-family: 'Unna', serif; font-size: 1.2rem; letter-spacing: 1px; box-sizing: border-box; outline: none; text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.8); -webkit-appearance: none; border-radius: 0; }
         textarea { resize: none; margin-bottom: 15px; }
         input:focus, select:focus, textarea:focus { border-bottom: 2px solid #3b3329; }
         input::placeholder, textarea::placeholder { color: #9c9182; font-style: italic; }
 
-        .message-toggle {
-            font-family: 'Unna', serif;
-            font-size: 0.95rem;
-            font-weight: 400;
-            color: #5c5041;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            margin: 0 auto 25px auto;
-            display: inline-block;
-            border-bottom: 1px dashed #7a6e5a;
-            transition: color 0.3s ease;
-            text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
-        }
+        .message-toggle { font-family: 'Unna', serif; font-size: 0.95rem; font-weight: 400; color: #5c5041; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; margin: 0 auto 25px auto; display: inline-block; border-bottom: 1px dashed #7a6e5a; transition: color 0.3s ease; text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9); }
         .message-toggle:hover { color: #3b3329; border-bottom-style: solid; }
         .message-container { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.6s ease, opacity 0.6s ease; }
         .message-container.open { max-height: 150px; opacity: 1; }
 
-        /* Error Message Styling */
-        #errorMessage {
-            display: none;
-            color: #8b3a3a; /* Elegant muted red */
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: rgba(255, 255, 255, 0.4);
-            border-left: 3px solid #8b3a3a;
-            text-align: left;
-            animation: fadeIn 0.4s ease;
-        }
+        #errorMessage { display: none; color: #8b3a3a; font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 500; margin-bottom: 15px; padding: 10px; background-color: rgba(255, 255, 255, 0.4); border-left: 3px solid #8b3a3a; text-align: left; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { 0% { opacity: 0; transform: translateY(-5px); } 100% { opacity: 1; transform: translateY(0); } }
 
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(-5px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        button {
-            width: 80%;
-            padding: 18px;
-            margin-top: 5px;
-            background-color: rgba(255, 255, 255, 0.3);
-            color: #4a4135;
-            border: 1.5px solid #7a6e5a;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-family: 'Unna', serif;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            backdrop-filter: blur(2px);
-        }
-
+        button { width: 80%; padding: 18px; margin-top: 5px; background-color: rgba(255, 255, 255, 0.3); color: #4a4135; border: 1.5px solid #7a6e5a; border-radius: 50px; font-size: 1.1rem; font-family: 'Unna', serif; text-transform: uppercase; letter-spacing: 4px; cursor: pointer; transition: all 0.4s ease; backdrop-filter: blur(2px); }
         button:hover { background-color: rgba(122, 110, 90, 0.2); color: #2e2821; }
 
-        /* "Verifying..." Animation inside Button */
-        .btn-loading {
-            pointer-events: none;
-            background-color: rgba(255, 255, 255, 0.5);
-            border-color: #4a4135;
-        }
+        .btn-loading { pointer-events: none; background-color: rgba(255, 255, 255, 0.5); border-color: #4a4135; }
+        .loading-dots::after { content: '.'; animation: dots 1.5s steps(4, end) infinite; }
+        @keyframes dots { 0%, 20% { content: ''; } 40% { content: '.'; } 60% { content: '..'; } 80%, 100% { content: '...'; } }
 
-        .loading-dots::after {
-            content: '.';
-            animation: dots 1.5s steps(4, end) infinite;
-        }
+        .note-text { font-family: 'Unna', serif; font-size: 0.85rem; color: #3b332d; margin-top: 20px; font-style: italic; letter-spacing: 1px; line-height: 1.5; text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.8); }
 
-        @keyframes dots {
-            0%, 20% { content: ''; }
-            40% { content: '.'; }
-            60% { content: '..'; }
-            80%, 100% { content: '...'; }
-        }
-
-        .note-text {
-            font-family: 'Unna', serif;
-            font-size: 0.85rem;
-            color: #3b332d;
-            margin-top: 20px;
-            font-style: italic;
-            letter-spacing: 1px;
-            line-height: 1.5;
-            text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.8);
-        }
-
-        /* Dynamic Message Styling */
-        #dynamicMessage {
-            display: none;
-            opacity: 0;
-            color: #4a5c4e;
-            font-family: 'Unna', serif;
-            font-size: 1.3rem;
-            letter-spacing: 1.5px;
-            margin-top: 30px;
-            text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
-            line-height: 1.8;
-        }
-
-        .thank-you-title {
-            font-family: 'Unna', serif;
-            font-size: 4.5rem; 
-            font-weight: 400;
-            color: #3b332d; 
-            text-transform: uppercase;
-            letter-spacing: 0.25em; 
-            display: block; 
-            margin-bottom: 20px; 
-            text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.8);
-        }
-
+        #dynamicMessage { display: none; opacity: 0; color: #4a5c4e; font-family: 'Unna', serif; font-size: 1.3rem; letter-spacing: 1.5px; margin-top: 30px; text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9); line-height: 1.8; }
+        .thank-you-title { font-family: 'Unna', serif; font-size: 4.5rem; font-weight: 400; color: #3b332d; text-transform: uppercase; letter-spacing: 0.25em; display: block; margin-bottom: 20px; text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.8); }
         .message-subtitle { display: block; font-size: 1.3rem; line-height: 1.6; }
         #dynamicMessage a { color: #5c5041; text-decoration: none; border-bottom: 1px solid #5c5041; transition: color 0.3s ease; }
         #dynamicMessage a:hover { color: #3b3329; border-bottom: 1px solid #3b3329; }
         .fade-in-up { display: block !important; animation: fadeInUp 1s ease forwards; }
         @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
 
-        /* MOBILE RESPONSIVENESS */
         @media (max-width: 768px) {
             .rsvp-container { width: 95%; padding: 10px; }
             h2 { font-size: 3.5rem; letter-spacing: 0.25em; margin-left: 0.25em; margin-bottom: 15px; }
@@ -321,7 +88,6 @@
     <video autoplay muted playsinline id="bgVideo"></video>
 
     <div class="rsvp-container">
-        
         <div id="formWrapper">
             <h2>RSVP</h2>
             <p class="deadline-text">The favor of your reply is requested on or before <span style="white-space: nowrap;">August 10, 2026</span>.</p>
@@ -364,7 +130,6 @@
         </div>
 
         <p id="dynamicMessage"></p>
-
     </div>
 
     <script>
@@ -416,7 +181,7 @@
             messageToggle.innerText = messageContainer.classList.contains('open') ? "Leave a message for the couple -" : "Leave a message for the couple +";
         });
 
-        // --- RSVP FORM & GUEST CHECK LOGIC ---
+        // --- RSVP FORM LOGIC ---
         const formWrapper = document.getElementById('formWrapper');
         const form = document.getElementById('rsvpForm');
         const submitBtn = document.getElementById('submitBtn');
@@ -442,24 +207,32 @@
         form.addEventListener('submit', e => {
             e.preventDefault();
             
-            // Start checking animation
-            errorMessage.style.display = 'none'; // Hide old errors
+            errorMessage.style.display = 'none'; 
             submitBtn.classList.add('btn-loading');
             submitBtn.innerHTML = 'Verifying Guest<span class="loading-dots"></span>';
 
             const formData = new FormData(form);
             const attendingStatus = formData.get('attending'); 
+            
+            // THE CRITICAL FIX: Converts the data into a URL format to completely bypass Google's POST security blocks
+            const url = new URL(scriptURL);
+            formData.forEach((value, key) => {
+                url.searchParams.append(key, value);
+            });
+            url.searchParams.append("nocache", new Date().getTime()); // Forces phones to not use old memory
 
-            fetch(scriptURL, { method: 'POST', body: formData })
-                .then(response => response.json()) // We now read the JSON database response!
+            // Uses a GET request instead of a POST request
+            fetch(url, { method: 'GET' })
+                .then(response => {
+                    if (!response.ok) throw new Error("Network issue");
+                    return response.json();
+                })
                 .then(data => {
                     if (data.result === 'error') {
-                        // The database said the name wasn't on the list
                         submitBtn.classList.remove('btn-loading');
                         submitBtn.innerText = 'Send Reply';
-                        errorMessage.style.display = 'block'; // Show red error box
+                        errorMessage.style.display = 'block'; 
                     } else {
-                        // The database approved the name!
                         localStorage.setItem('weddingRsvpStatus', attendingStatus);
                         formWrapper.classList.add('fade-out');
                         
@@ -474,7 +247,7 @@
                     console.error('Error!', error.message);
                     submitBtn.classList.remove('btn-loading');
                     submitBtn.innerText = 'Send Reply';
-                    alert('There was a network error. Please try again.');
+                    alert('There was a connection error. Please try again.');
                 });
         });
     </script>
