@@ -28,7 +28,6 @@
             position: relative;
         }
 
-        /* Full-Screen Video Background */
         #bgVideo {
             position: fixed;
             top: 0;
@@ -40,7 +39,6 @@
             object-position: center; 
         }
 
-        /* RSVP Container */
         .rsvp-container {
             position: relative;
             z-index: 10; 
@@ -52,7 +50,6 @@
             overflow-y: auto; 
         }
 
-        /* Form Wrapper */
         #formWrapper {
             opacity: 1;
             transition: opacity 0.6s ease;
@@ -89,9 +86,7 @@
             line-height: 1.6;
         }
 
-        /* =========================================
-           COUNTDOWN TIMER STYLES
-           ========================================= */
+        /* Countdown Timer */
         .countdown-container {
             display: flex;
             justify-content: center;
@@ -111,7 +106,7 @@
             font-family: 'Unna', serif;
             font-size: 3.2rem;
             font-weight: 700;
-            color: #b8925a; /* Elegant muted gold/bronze matching your photo */
+            color: #b8925a; 
             line-height: 1;
             text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.8);
         }
@@ -131,12 +126,11 @@
             font-size: 2rem;
             color: #b8925a;
             line-height: 1.2;
-            margin-top: 8px; /* Centers the dot between the numbers */
+            margin-top: 8px; 
             opacity: 0.7;
         }
 
-        /* ========================================= */
-
+        /* Form Elements */
         label {
             display: block;
             text-align: left;
@@ -150,11 +144,21 @@
             text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
         }
 
-        /* Seamless Input Fields & Textarea */
+        .input-helper {
+            display: block;
+            text-align: left;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem;
+            color: #5c5041;
+            font-style: italic;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.8);
+        }
+
         input, select, textarea {
             width: 100%;
             padding: 10px 5px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             background-color: transparent;
             border: none;
             border-bottom: 1.5px solid #7a6e5a;
@@ -169,21 +173,10 @@
             border-radius: 0;
         }
 
-        textarea {
-            resize: none;
-            margin-bottom: 15px;
-        }
+        textarea { resize: none; margin-bottom: 15px; }
+        input:focus, select:focus, textarea:focus { border-bottom: 2px solid #3b3329; }
+        input::placeholder, textarea::placeholder { color: #9c9182; font-style: italic; }
 
-        input:focus, select:focus, textarea:focus {
-            border-bottom: 2px solid #3b3329;
-        }
-
-        input::placeholder, textarea::placeholder {
-            color: #9c9182;
-            font-style: italic;
-        }
-
-        /* Message Toggle Button & Animation */
         .message-toggle {
             font-family: 'Unna', serif;
             font-size: 0.95rem;
@@ -198,29 +191,34 @@
             transition: color 0.3s ease;
             text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.9);
         }
+        .message-toggle:hover { color: #3b3329; border-bottom-style: solid; }
+        .message-container { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.6s ease, opacity 0.6s ease; }
+        .message-container.open { max-height: 150px; opacity: 1; }
 
-        .message-toggle:hover {
-            color: #3b3329;
-            border-bottom-style: solid;
+        /* Error Message Styling */
+        #errorMessage {
+            display: none;
+            color: #8b3a3a; /* Elegant muted red */
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.4);
+            border-left: 3px solid #8b3a3a;
+            text-align: left;
+            animation: fadeIn 0.4s ease;
         }
 
-        .message-container {
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-            transition: max-height 0.6s ease, opacity 0.6s ease;
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-5px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
-        .message-container.open {
-            max-height: 150px;
-            opacity: 1;
-        }
-
-        /* Elegant Submit Button */
         button {
             width: 80%;
             padding: 18px;
-            margin-top: 10px;
+            margin-top: 5px;
             background-color: rgba(255, 255, 255, 0.3);
             color: #4a4135;
             border: 1.5px solid #7a6e5a;
@@ -234,9 +232,25 @@
             backdrop-filter: blur(2px);
         }
 
-        button:hover {
-            background-color: rgba(122, 110, 90, 0.2);
-            color: #2e2821;
+        button:hover { background-color: rgba(122, 110, 90, 0.2); color: #2e2821; }
+
+        /* "Verifying..." Animation inside Button */
+        .btn-loading {
+            pointer-events: none;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-color: #4a4135;
+        }
+
+        .loading-dots::after {
+            content: '.';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
         }
 
         .note-text {
@@ -248,20 +262,6 @@
             letter-spacing: 1px;
             line-height: 1.5;
             text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.8);
-        }
-
-        /* Button Loading Animation */
-        .btn-loading {
-            animation: pulse 1.5s infinite ease-in-out;
-            pointer-events: none;
-            background-color: rgba(255, 255, 255, 0.5);
-            border-color: #4a4135;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(0.97); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
         }
 
         /* Dynamic Message Styling */
@@ -277,7 +277,6 @@
             line-height: 1.8;
         }
 
-        /* Styling for the "Thank You!" Header */
         .thank-you-title {
             font-family: 'Unna', serif;
             font-size: 4.5rem; 
@@ -290,113 +289,30 @@
             text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.8);
         }
 
-        .message-subtitle {
-            display: block;
-            font-size: 1.3rem;
-            line-height: 1.6;
-        }
-        
-        #dynamicMessage a {
-            color: #5c5041;
-            text-decoration: none;
-            border-bottom: 1px solid #5c5041;
-            transition: color 0.3s ease;
-        }
-        
-        #dynamicMessage a:hover {
-            color: #3b3329;
-            border-bottom: 1px solid #3b3329;
-        }
-
-        .fade-in-up {
-            display: block !important;
-            animation: fadeInUp 1s ease forwards;
-        }
-
-        @keyframes fadeInUp {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
+        .message-subtitle { display: block; font-size: 1.3rem; line-height: 1.6; }
+        #dynamicMessage a { color: #5c5041; text-decoration: none; border-bottom: 1px solid #5c5041; transition: color 0.3s ease; }
+        #dynamicMessage a:hover { color: #3b3329; border-bottom: 1px solid #3b3329; }
+        .fade-in-up { display: block !important; animation: fadeInUp 1s ease forwards; }
+        @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
 
         /* MOBILE RESPONSIVENESS */
         @media (max-width: 768px) {
-            .rsvp-container {
-                width: 95%; 
-                padding: 10px;
-            }
-
-            h2 {
-                font-size: 3.5rem; 
-                letter-spacing: 0.25em; 
-                margin-left: 0.25em;
-                margin-bottom: 15px;
-            }
-
-            .deadline-text {
-                font-size: 0.75rem; 
-                margin-bottom: 20px;
-                letter-spacing: 1px;
-                line-height: 1.6;
-            }
-
-            /* Responsive Countdown Scaling */
-            .countdown-container {
-                gap: 8px;
-                margin-bottom: 30px;
-            }
-            
-            .countdown-block {
-                width: 55px;
-            }
-
-            .countdown-number {
-                font-size: 2.2rem;
-            }
-
-            .countdown-label {
-                font-size: 0.5rem;
-                letter-spacing: 1px;
-            }
-
-            .countdown-separator {
-                font-size: 1.5rem;
-                margin-top: 6px;
-            }
-
-            label {
-                font-size: 0.95rem; 
-                letter-spacing: 1.5px;
-            }
-
-            input, select, textarea {
-                font-size: 16px !important; 
-                padding: 8px 4px;
-                margin-bottom: 25px;
-            }
-
-            button {
-                width: 95%; 
-                padding: 15px;
-                font-size: 0.95rem;
-                letter-spacing: 3px;
-            }
-
-            .note-text {
-                font-size: 0.75rem;
-            }
-
-            #dynamicMessage {
-                font-size: 1.15rem; 
-            }
-
-            .thank-you-title {
-                font-size: 2.8rem;
-                letter-spacing: 0.15em;
-            }
-
-            .message-subtitle {
-                font-size: 1.15rem;
-            }
+            .rsvp-container { width: 95%; padding: 10px; }
+            h2 { font-size: 3.5rem; letter-spacing: 0.25em; margin-left: 0.25em; margin-bottom: 15px; }
+            .deadline-text { font-size: 0.75rem; margin-bottom: 20px; letter-spacing: 1px; }
+            .countdown-container { gap: 8px; margin-bottom: 30px; }
+            .countdown-block { width: 55px; }
+            .countdown-number { font-size: 2.2rem; }
+            .countdown-label { font-size: 0.5rem; letter-spacing: 1px; }
+            .countdown-separator { font-size: 1.5rem; margin-top: 6px; }
+            label { font-size: 0.95rem; letter-spacing: 1.5px; }
+            .input-helper { font-size: 0.65rem; }
+            input, select, textarea { font-size: 16px !important; padding: 8px 4px; margin-bottom: 25px; }
+            button { width: 95%; padding: 15px; font-size: 0.95rem; letter-spacing: 3px; }
+            .note-text { font-size: 0.75rem; }
+            #dynamicMessage { font-size: 1.15rem; }
+            .thank-you-title { font-size: 2.8rem; letter-spacing: 0.15em; }
+            .message-subtitle { font-size: 1.15rem; }
         }
     </style>
 </head>
@@ -411,30 +327,19 @@
             <p class="deadline-text">The favor of your reply is requested on or before <span style="white-space: nowrap;">August 10, 2026</span>.</p>
             
             <div class="countdown-container">
-                <div class="countdown-block">
-                    <span class="countdown-number" id="cd-days">00</span>
-                    <span class="countdown-label">Days</span>
-                </div>
+                <div class="countdown-block"><span class="countdown-number" id="cd-days">00</span><span class="countdown-label">Days</span></div>
                 <span class="countdown-separator">&middot;</span>
-                <div class="countdown-block">
-                    <span class="countdown-number" id="cd-hours">00</span>
-                    <span class="countdown-label">Hours</span>
-                </div>
+                <div class="countdown-block"><span class="countdown-number" id="cd-hours">00</span><span class="countdown-label">Hours</span></div>
                 <span class="countdown-separator">&middot;</span>
-                <div class="countdown-block">
-                    <span class="countdown-number" id="cd-minutes">00</span>
-                    <span class="countdown-label">Minutes</span>
-                </div>
+                <div class="countdown-block"><span class="countdown-number" id="cd-minutes">00</span><span class="countdown-label">Minutes</span></div>
                 <span class="countdown-separator">&middot;</span>
-                <div class="countdown-block">
-                    <span class="countdown-number" id="cd-seconds">00</span>
-                    <span class="countdown-label">Seconds</span>
-                </div>
+                <div class="countdown-block"><span class="countdown-number" id="cd-seconds">00</span><span class="countdown-label">Seconds</span></div>
             </div>
 
             <form id="rsvpForm">
                 <label>Name:</label>
-                <input type="text" name="name" placeholder="Please enter your full name" required>
+                <span class="input-helper">Format: First and Last Name (Not case sensitive)</span>
+                <input type="text" name="name" placeholder="e.g. John Doe" required>
                 
                 <label>Email:</label>
                 <input type="email" name="email" placeholder="Please enter your email address" required>
@@ -447,11 +352,12 @@
                 </select>
 
                 <div id="messageToggle" class="message-toggle">Leave a message for the couple +</div>
-                
                 <div id="messageContainer" class="message-container">
                     <textarea name="message" placeholder="Write your warm wishes here..." rows="3"></textarea>
                 </div>
                 
+                <div id="errorMessage">We couldn't find an invitation matching that name. Please check your spelling and ensure it matches the name on your envelope.</div>
+
                 <button type="submit" id="submitBtn">Send Reply</button>
                 <p class="note-text">Note: You can only submit 1 response. If you have a change of mind, please reach out to us via FB Messenger.</p>
             </form>
@@ -462,39 +368,28 @@
     </div>
 
     <script>
-        // --- DEVICE DETECTION & TIMEOUT VIDEO PAUSE FIX ---
+        // --- VIDEO FIX ---
         const bgVideo = document.getElementById('bgVideo');
-        
         const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 
         if (isMobileDevice) {
             bgVideo.src = 'background-mobile.mp4';
             bgVideo.loop = false; 
-            
             bgVideo.addEventListener('timeupdate', function() {
-                if (bgVideo.duration && bgVideo.currentTime >= bgVideo.duration - 0.5) {
-                    bgVideo.pause();
-                }
+                if (bgVideo.duration && bgVideo.currentTime >= bgVideo.duration - 0.5) bgVideo.pause();
             });
-
         } else {
             bgVideo.src = 'background.mp4';
             bgVideo.loop = true;  
         }
-        
         bgVideo.load();
-        
-        bgVideo.play().catch(function(error) {
-            console.log("Browser autoplay blocked, video will remain paused.");
-        });
+        bgVideo.play().catch(e => console.log("Autoplay blocked."));
 
-        // --- REAL-TIME COUNTDOWN TIMER ---
+        // --- TIMER ---
         const countDownDate = new Date("August 10, 2026 00:00:00").getTime();
-
         const x = setInterval(function() {
             const now = new Date().getTime();
             const distance = countDownDate - now;
-
             if (distance < 0) {
                 clearInterval(x);
                 document.getElementById("cd-days").innerText = "00";
@@ -503,94 +398,83 @@
                 document.getElementById("cd-seconds").innerText = "00";
                 return;
             }
-
-            // Time calculations
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            // Adding the "0" padding so it always looks clean (e.g., 09 instead of 9)
             document.getElementById("cd-days").innerText = days.toString().padStart(2, '0');
             document.getElementById("cd-hours").innerText = hours.toString().padStart(2, '0');
             document.getElementById("cd-minutes").innerText = minutes.toString().padStart(2, '0');
             document.getElementById("cd-seconds").innerText = seconds.toString().padStart(2, '0');
         }, 1000);
 
-        // --- MESSAGE TOGGLE ANIMATION ---
+        // --- MESSAGE ANIMATION ---
         const messageToggle = document.getElementById('messageToggle');
         const messageContainer = document.getElementById('messageContainer');
-
         messageToggle.addEventListener('click', () => {
             messageContainer.classList.toggle('open');
-            if (messageContainer.classList.contains('open')) {
-                messageToggle.innerText = "Leave a message for the couple -";
-            } else {
-                messageToggle.innerText = "Leave a message for the couple +";
-            }
+            messageToggle.innerText = messageContainer.classList.contains('open') ? "Leave a message for the couple -" : "Leave a message for the couple +";
         });
 
-        // --- RSVP FORM LOGIC ---
+        // --- RSVP FORM & GUEST CHECK LOGIC ---
         const formWrapper = document.getElementById('formWrapper');
         const form = document.getElementById('rsvpForm');
         const submitBtn = document.getElementById('submitBtn');
+        const errorMessage = document.getElementById('errorMessage');
         const dynamicMessage = document.getElementById('dynamicMessage');
 
         // *** PASTE YOUR GOOGLE SCRIPT URL HERE ***
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbw278gjb0ayz_5eMSZb0We8evxxnxgmPTzUQiPg8rBAmXkCJMr6Jl-xKJXZGqdLXFhFBw/exec';
+        const scriptURL = 'YOUR_GOOGLE_SCRIPT_WEB_APP_URL';
 
         const msgReturnVisitorYes = "Hi there! Thank you so much for your previous response. We have everything we need and look forward to seeing you soon!";
         const msgReturnVisitorNo = "Change of plans? If you can make it after all, we’d love to have you! Just let us know by sending an email to: <a href='mailto:chrisubarre04@gmail.com'>chrisubarre04@gmail.com</a> or <a href='mailto:castorsarahjean03@gmail.com'>castorsarahjean03@gmail.com</a>.";
         const msgAccept = "<span class='thank-you-title'>Thank you!</span><span class='message-subtitle'>Your response has been received. We're excited to celebrate our big day with you!</span>";
         const msgDecline = "We completely understand, no worries at all! Your warm wishes are more than enough to bless our special day.";
 
-        // CHECK MEMORY ON PAGE LOAD
         const previousStatus = localStorage.getItem('weddingRsvpStatus');
         if (previousStatus) {
             formWrapper.style.display = 'none';
-            
-            if (previousStatus === 'No') {
-                dynamicMessage.innerHTML = msgReturnVisitorNo;
-            } else {
-                dynamicMessage.innerHTML = msgReturnVisitorYes;
-            }
-            
+            dynamicMessage.innerHTML = previousStatus === 'No' ? msgReturnVisitorNo : msgReturnVisitorYes;
             dynamicMessage.style.display = 'block';
             dynamicMessage.style.opacity = '1'; 
         }
 
-        // HANDLE NEW SUBMISSIONS
         form.addEventListener('submit', e => {
             e.preventDefault();
             
+            // Start checking animation
+            errorMessage.style.display = 'none'; // Hide old errors
             submitBtn.classList.add('btn-loading');
-            submitBtn.innerText = 'Sending...';
+            submitBtn.innerHTML = 'Verifying Guest<span class="loading-dots"></span>';
 
             const formData = new FormData(form);
             const attendingStatus = formData.get('attending'); 
 
             fetch(scriptURL, { method: 'POST', body: formData })
-                .then(response => {
-                    localStorage.setItem('weddingRsvpStatus', attendingStatus);
-                    formWrapper.classList.add('fade-out');
-                    
-                    setTimeout(() => {
-                        formWrapper.style.display = 'none';
+                .then(response => response.json()) // We now read the JSON database response!
+                .then(data => {
+                    if (data.result === 'error') {
+                        // The database said the name wasn't on the list
+                        submitBtn.classList.remove('btn-loading');
+                        submitBtn.innerText = 'Send Reply';
+                        errorMessage.style.display = 'block'; // Show red error box
+                    } else {
+                        // The database approved the name!
+                        localStorage.setItem('weddingRsvpStatus', attendingStatus);
+                        formWrapper.classList.add('fade-out');
                         
-                        if (attendingStatus === 'No') {
-                            dynamicMessage.innerHTML = msgDecline;
-                        } else {
-                            dynamicMessage.innerHTML = msgAccept;
-                        }
-
-                        dynamicMessage.classList.add('fade-in-up');
-                    }, 600); 
+                        setTimeout(() => {
+                            formWrapper.style.display = 'none';
+                            dynamicMessage.innerHTML = attendingStatus === 'No' ? msgDecline : msgAccept;
+                            dynamicMessage.classList.add('fade-in-up');
+                        }, 600); 
+                    }
                 })
                 .catch(error => {
                     console.error('Error!', error.message);
                     submitBtn.classList.remove('btn-loading');
                     submitBtn.innerText = 'Send Reply';
-                    alert('There was an error submitting your RSVP. Please try again.');
+                    alert('There was a network error. Please try again.');
                 });
         });
     </script>
