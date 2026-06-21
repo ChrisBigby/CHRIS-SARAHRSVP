@@ -12,41 +12,13 @@
     <style>
         /* Basic Reset & Anti-Smart-Zoom */
         html, body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background-color: #f6f0e6; overflow: hidden; height: 100vh; }
-        
         #bgVideo { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; object-fit: cover; object-position: center; }
         
-        /* The container now acts as a full-screen window, so scrolling works EVERYWHERE */
-        .rsvp-container { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100vw; 
-            height: 100vh; 
-            z-index: 10; 
-            overflow-y: auto; 
-            
-            /* Hides the scrollbar completely */
-            scrollbar-width: none; 
-            -ms-overflow-style: none; 
-        }
+        .rsvp-container { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 10; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none; }
         .rsvp-container::-webkit-scrollbar { display: none; }
+        .flex-wrapper { display: flex; justify-content: center; align-items: center; min-height: 100%; padding: 40px 0; }
 
-        /* The flex-wrapper ensures the form is centered inside the scrollable container */
-        .flex-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100%;
-            padding: 40px 0; /* Gives space so the form doesn't hit the top/bottom edges when scrolling */
-        }
-
-        #formWrapper { 
-            width: 90%; 
-            max-width: 600px; 
-            text-align: center;
-            opacity: 1; 
-            transition: opacity 0.6s ease; 
-        }
+        #formWrapper { width: 90%; max-width: 600px; text-align: center; opacity: 1; transition: opacity 0.6s ease; }
         #formWrapper.fade-out { opacity: 0; pointer-events: none; }
 
         h2 { font-family: 'Unna', serif; font-size: 5rem; font-weight: 400; color: #3b332d; margin-top: 0; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.35em; margin-left: 0.35em; text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.8); }
@@ -66,7 +38,15 @@
         input:focus, select:focus, textarea:focus { border-bottom: 2px solid #3b3329; }
         input::placeholder, textarea::placeholder { color: #9c9182; font-style: italic; }
 
-        /* Real-Time Validation UI */
+        /* Multi-Guest Layout Styles */
+        .guest-block { position: relative; border-top: 1px dashed rgba(122, 110, 90, 0.4); padding-top: 25px; margin-top: 5px; animation: fadeIn 0.5s ease; }
+        .guest-block:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+        .remove-guest-btn { position: absolute; top: 25px; right: 0; font-family: 'Montserrat', sans-serif; font-size: 0.65rem; color: #8b3a3a; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; background: none; border: none; cursor: pointer; padding: 0; }
+        .remove-guest-btn:hover { color: #5c2424; text-decoration: underline; }
+        
+        .add-guest-btn { width: 100%; background: transparent; color: #4a4135; border: 1px dashed #7a6e5a; border-radius: 5px; padding: 12px; font-size: 0.9rem; font-family: 'Montserrat', sans-serif; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; margin-bottom: 30px; transition: all 0.3s ease; }
+        .add-guest-btn:hover { background-color: rgba(122, 110, 90, 0.1); border-style: solid; color: #2e2821; }
+
         .input-wrapper { position: relative; width: 100%; }
         .input-wrapper input { padding-right: 35px; } 
         .validation-icon { position: absolute; right: 5px; top: 10px; font-size: 1.3rem; opacity: 0; transition: opacity 0.3s ease; font-family: 'Montserrat', sans-serif; font-weight: bold; text-shadow: none; }
@@ -84,8 +64,8 @@
         #errorMessage { display: none; color: #8b3a3a; font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 500; margin-bottom: 15px; padding: 10px; background-color: rgba(255, 255, 255, 0.4); border-left: 3px solid #8b3a3a; text-align: left; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { 0% { opacity: 0; transform: translateY(-5px); } 100% { opacity: 1; transform: translateY(0); } }
 
-        button { width: 80%; padding: 18px; margin-top: 5px; background-color: rgba(255, 255, 255, 0.3); color: #4a4135; border: 1.5px solid #7a6e5a; border-radius: 50px; font-size: 1.1rem; font-family: 'Unna', serif; text-transform: uppercase; letter-spacing: 4px; cursor: pointer; transition: all 0.4s ease; backdrop-filter: blur(2px); }
-        button:hover { background-color: rgba(122, 110, 90, 0.2); color: #2e2821; }
+        .submit-btn { width: 80%; padding: 18px; margin-top: 5px; background-color: rgba(255, 255, 255, 0.3); color: #4a4135; border: 1.5px solid #7a6e5a; border-radius: 50px; font-size: 1.1rem; font-family: 'Unna', serif; text-transform: uppercase; letter-spacing: 4px; cursor: pointer; transition: all 0.4s ease; backdrop-filter: blur(2px); }
+        .submit-btn:hover { background-color: rgba(122, 110, 90, 0.2); color: #2e2821; }
         .btn-loading { pointer-events: none; background-color: rgba(255, 255, 255, 0.5); border-color: #4a4135; }
         .loading-dots::after { content: '.'; animation: dots 1.5s steps(4, end) infinite; }
         @keyframes dots { 0%, 20% { content: ''; } 40% { content: '.'; } 60% { content: '..'; } 80%, 100% { content: '...'; } }
@@ -97,6 +77,10 @@
         .message-subtitle { display: block; font-size: 1.3rem; line-height: 1.6; }
         #dynamicMessage a { color: #5c5041; text-decoration: none; border-bottom: 1px solid #5c5041; transition: color 0.3s ease; }
         #dynamicMessage a:hover { color: #3b3329; border-bottom: 1px solid #3b3329; }
+        
+        .unlock-link { display: inline-block; margin-top: 30px; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; color: #5c5041; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px dashed #5c5041; cursor: pointer; transition: color 0.3s ease; }
+        .unlock-link:hover { color: #2e2821; border-bottom-style: solid; }
+        
         .fade-in-up { display: block !important; animation: fadeInUp 1s ease forwards; }
         @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
 
@@ -112,11 +96,13 @@
             label { font-size: 0.95rem; letter-spacing: 1.5px; }
             .input-helper { font-size: 0.65rem; }
             input, select, textarea { font-size: 16px !important; padding: 8px 4px; margin-bottom: 25px; }
-            button { width: 95%; padding: 15px; font-size: 0.95rem; letter-spacing: 3px; }
+            .add-guest-btn { font-size: 0.8rem; padding: 10px; margin-bottom: 25px; }
+            .submit-btn { width: 95%; padding: 15px; font-size: 0.95rem; letter-spacing: 3px; }
             .note-text { font-size: 0.75rem; }
             #dynamicMessage { font-size: 1.15rem; }
             .thank-you-title { font-size: 2.8rem; letter-spacing: 0.15em; }
             .message-subtitle { font-size: 1.15rem; }
+            .unlock-link { font-size: 0.65rem; }
         }
     </style>
 </head>
@@ -142,32 +128,38 @@
                 </div>
 
                 <form id="rsvpForm">
-                    <label>Name:</label>
-                    <span class="input-helper">Format: First and Last Name (Not case sensitive)</span>
                     
-                    <div class="input-wrapper">
-                        <input type="text" id="nameInput" name="name" placeholder="e.g. John Doe" required>
-                        <span id="nameIcon" class="validation-icon"></span>
+                    <div id="guestsContainer">
+                        <div class="guest-block" id="guest-0">
+                            <label>Name (Guest 1):</label>
+                            <span class="input-helper">Format: First and Last Name (Not case sensitive)</span>
+                            <div class="input-wrapper">
+                                <input type="text" class="name-input" placeholder="e.g. John Doe" required>
+                                <span class="validation-icon"></span>
+                            </div>
+                            
+                            <label>Will this guest be attending?</label>
+                            <select class="attending-select" required>
+                                <option value="" disabled selected>Kindly select an option</option>
+                                <option value="Yes">Joyfully Accepts</option>
+                                <option value="No">Regretfully Declines</option>
+                            </select>
+                        </div>
                     </div>
-                    
-                    <label>Email:</label>
-                    <input type="email" name="email" placeholder="Please enter your email address" required>
-                    
-                    <label>Will you be attending?</label>
-                    <select name="attending" required>
-                        <option value="" disabled selected>Kindly select an option</option>
-                        <option value="Yes">Joyfully Accepts</option>
-                        <option value="No">Regretfully Declines</option>
-                    </select>
 
+                    <button type="button" id="addGuestBtn" class="add-guest-btn">+ Add Another Guest</button>
+                    
+                    <label>Contact Email:</label>
+                    <input type="email" id="emailInput" placeholder="Please enter your email address" required>
+                    
                     <div id="messageToggle" class="message-toggle">Leave a message for the couple +</div>
                     <div id="messageContainer" class="message-container">
-                        <textarea name="message" placeholder="Write your warm wishes here..." rows="3"></textarea>
+                        <textarea id="messageInput" placeholder="Write your warm wishes here..." rows="3"></textarea>
                     </div>
                     
                     <div id="errorMessage">We couldn't find an invitation matching that name. Please check your spelling and make sure it matches exactly how it appears on your invitation.</div>
 
-                    <button type="submit" id="submitBtn">Send Reply</button>
+                    <button type="submit" id="submitBtn" class="submit-btn">Send Reply</button>
                     <p class="note-text">Note: You can only submit 1 response. If you have a change of mind, please reach out to us via FB Messenger.</p>
                 </form>
             </div>
@@ -227,12 +219,7 @@
         });
 
         // *** PASTE YOUR GOOGLE SCRIPT URL HERE ***
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbw278gjb0ayz_5eMSZb0We8evxxnxgmPTzUQiPg8rBAmXkCJMr6Jl-xKJXZGqdLXFhFBw/exec';
-
-        const msgReturnVisitorYes = "Hi there! Thank you so much for your previous response. We have everything we need and look forward to seeing you soon!";
-        const msgReturnVisitorNo = "Change of plans? If you can make it after all, we’d love to have you! Just let us know by sending an email to: <a href='mailto:chrisubarre04@gmail.com'>chrisubarre04@gmail.com</a> or <a href='mailto:castorsarahjean03@gmail.com'>castorsarahjean03@gmail.com</a>.";
-        const msgAccept = "<span class='thank-you-title'>Thank you!</span><span class='message-subtitle'>Your response has been received. We're excited to celebrate our big day with you!</span>";
-        const msgDecline = "We completely understand, no worries at all! Your warm wishes are more than enough to bless our special day.";
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbw278gjb0ayz_5eMSZb0We8evxxnxgmPTzUQiPg8rBAmXkCJMr6Jl-xKJXZGqdLXFhFBw/exec							';
 
         const formWrapper = document.getElementById('formWrapper');
         const form = document.getElementById('rsvpForm');
@@ -240,54 +227,95 @@
         const errorMessage = document.getElementById('errorMessage');
         const dynamicMessage = document.getElementById('dynamicMessage');
 
+        // This is the special link that clears their device memory if they need to submit for another family member!
+        const unlockHTML = "<br><span class='unlock-link' onclick='localStorage.removeItem(\"weddingRsvpStatus\"); location.reload();'>Need to submit an RSVP for another family member? Click here.</span>";
+
+        const msgReturnVisitor = "<span class='thank-you-title'>Welcome Back</span><span class='message-subtitle'>Thank you so much for your previous responses. We have everything we need and look forward to seeing you soon!</span>" + unlockHTML;
+        const msgSuccess = "<span class='thank-you-title'>Thank you!</span><span class='message-subtitle'>Your responses have been beautifully recorded. We're excited to celebrate our big day with you!</span>" + unlockHTML;
+
+        // CHECK MEMORY ON PAGE LOAD
         const previousStatus = localStorage.getItem('weddingRsvpStatus');
         if (previousStatus) {
             formWrapper.style.display = 'none';
-            dynamicMessage.innerHTML = previousStatus === 'No' ? msgReturnVisitorNo : msgReturnVisitorYes;
+            dynamicMessage.innerHTML = msgReturnVisitor;
             dynamicMessage.style.display = 'block';
             dynamicMessage.style.opacity = '1'; 
         }
 
-        // --- REAL-TIME VALIDATION SCRIPT ---
-        const nameInput = document.getElementById('nameInput');
-        const nameIcon = document.getElementById('nameIcon');
-        let typingTimer; 
+        // --- ADD GUEST LOGIC ---
+        const guestsContainer = document.getElementById('guestsContainer');
+        const addGuestBtn = document.getElementById('addGuestBtn');
+        let guestCount = 1;
 
-        nameInput.addEventListener('input', function() {
-            clearTimeout(typingTimer);
-            const nameValue = nameInput.value.trim();
+        addGuestBtn.addEventListener('click', () => {
+            guestCount++;
+            const guestId = Date.now();
+            const guestBlock = document.createElement('div');
+            guestBlock.className = 'guest-block';
+            guestBlock.innerHTML = `
+                <button type="button" class="remove-guest-btn" onclick="this.parentElement.remove()">Remove Guest</button>
+                <label>Name (Guest ${guestCount}):</label>
+                <span class="input-helper">Format: First and Last Name (Not case sensitive)</span>
+                <div class="input-wrapper">
+                    <input type="text" class="name-input" placeholder="e.g. Jane Doe" required>
+                    <span class="validation-icon"></span>
+                </div>
+                <label>Will this guest be attending?</label>
+                <select class="attending-select" required>
+                    <option value="" disabled selected>Kindly select an option</option>
+                    <option value="Yes">Joyfully Accepts</option>
+                    <option value="No">Regretfully Declines</option>
+                </select>
+            `;
+            guestsContainer.appendChild(guestBlock);
+        });
 
-            if (nameValue === "") {
-                nameIcon.className = "validation-icon"; 
+        // --- REAL-TIME VALIDATION (Works for all cloned inputs via Event Delegation) ---
+        let typingTimers = {}; 
+        
+        guestsContainer.addEventListener('input', function(e) {
+            if (e.target.classList.contains('name-input')) {
+                const nameInput = e.target;
+                const nameIcon = nameInput.nextElementSibling;
+                const nameValue = nameInput.value.trim();
+                
+                // Gives each cloned input a unique ID for the typing timer
+                const inputId = nameInput.getAttribute('data-id') || (nameInput.setAttribute('data-id', Date.now()), nameInput.getAttribute('data-id'));
+
+                clearTimeout(typingTimers[inputId]);
+
+                if (nameValue === "") {
+                    nameIcon.className = "validation-icon"; 
+                    errorMessage.style.display = 'none';
+                    return;
+                }
+
+                nameIcon.innerHTML = '&#8635;'; 
+                nameIcon.className = "validation-icon icon-loading show";
                 errorMessage.style.display = 'none';
-                return;
+
+                typingTimers[inputId] = setTimeout(() => {
+                    const url = new URL(scriptURL);
+                    url.searchParams.append("action", "validate"); 
+                    url.searchParams.append("name", nameValue);
+                    url.searchParams.append("nocache", new Date().getTime());
+
+                    fetch(url.toString(), { method: 'GET' })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.result === 'valid') {
+                                nameIcon.innerHTML = '&#10003;'; 
+                                nameIcon.className = "validation-icon icon-valid show";
+                            } else {
+                                nameIcon.innerHTML = '&#10007;'; 
+                                nameIcon.className = "validation-icon icon-invalid show";
+                            }
+                        })
+                        .catch(err => {
+                            nameIcon.className = "validation-icon"; 
+                        });
+                }, 800);
             }
-
-            nameIcon.innerHTML = '&#8635;'; 
-            nameIcon.className = "validation-icon icon-loading show";
-            errorMessage.style.display = 'none';
-
-            typingTimer = setTimeout(() => {
-                const url = new URL(scriptURL);
-                url.searchParams.append("action", "validate"); 
-                url.searchParams.append("name", nameValue);
-                url.searchParams.append("nocache", new Date().getTime());
-
-                fetch(url.toString(), { method: 'GET' })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.result === 'valid') {
-                            nameIcon.innerHTML = '&#10003;'; 
-                            nameIcon.className = "validation-icon icon-valid show";
-                        } else {
-                            nameIcon.innerHTML = '&#10007;'; 
-                            nameIcon.className = "validation-icon icon-invalid show";
-                        }
-                    })
-                    .catch(err => {
-                        nameIcon.className = "validation-icon"; 
-                    });
-            }, 800);
         });
 
         // --- FINAL FORM SUBMIT LOGIC ---
@@ -298,14 +326,23 @@
             submitBtn.classList.add('btn-loading');
             submitBtn.innerHTML = 'Submitting<span class="loading-dots"></span>';
 
-            const formData = new FormData(form);
-            const attendingStatus = formData.get('attending'); 
+            // Gather all the guests dynamically!
+            const guestsArray = [];
+            const guestBlocks = document.querySelectorAll('.guest-block');
+            guestBlocks.forEach(block => {
+                const name = block.querySelector('.name-input').value.trim();
+                const attending = block.querySelector('.attending-select').value;
+                guestsArray.push({ name: name, attending: attending });
+            });
+            
+            const email = document.getElementById('emailInput').value.trim();
+            const message = document.getElementById('messageInput').value.trim();
             
             const url = new URL(scriptURL);
-            formData.forEach((value, key) => {
-                url.searchParams.append(key, value);
-            });
             url.searchParams.append("action", "submit"); 
+            url.searchParams.append("guests", JSON.stringify(guestsArray));
+            url.searchParams.append("email", email);
+            url.searchParams.append("message", message);
             url.searchParams.append("nocache", new Date().getTime());
 
             fetch(url.toString(), { method: 'GET', redirect: 'follow' })
@@ -314,7 +351,8 @@
                     if (data.result === 'not_invited') {
                         submitBtn.classList.remove('btn-loading');
                         submitBtn.innerText = 'Send Reply';
-                        errorMessage.innerText = "We couldn't find an invitation matching that name. Please check your spelling and make sure it matches exactly how it appears on your invitation.";
+                        // Shows exactly which names were misspelled!
+                        errorMessage.innerText = data.message + " Please check your spelling and make sure it matches exactly how it appears on your invitation.";
                         errorMessage.style.display = 'block'; 
                     } else if (data.result === 'error') {
                         submitBtn.classList.remove('btn-loading');
@@ -322,12 +360,13 @@
                         errorMessage.innerText = "Database Error: " + data.message;
                         errorMessage.style.display = 'block'; 
                     } else if (data.result === 'success') {
-                        localStorage.setItem('weddingRsvpStatus', attendingStatus);
+                        // Locks the device after a successful family submission
+                        localStorage.setItem('weddingRsvpStatus', 'submitted');
                         formWrapper.classList.add('fade-out');
                         
                         setTimeout(() => {
                             formWrapper.style.display = 'none';
-                            dynamicMessage.innerHTML = attendingStatus === 'No' ? msgDecline : msgAccept;
+                            dynamicMessage.innerHTML = msgSuccess;
                             dynamicMessage.classList.add('fade-in-up');
                         }, 600); 
                     }
